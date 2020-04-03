@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.services;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.IngredientNotFoundException;
 import ru.vsu.amm.inshaker.model.Ingredient;
+import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.repositories.IngredientRepository;
 
 import java.util.List;
@@ -18,6 +19,15 @@ public class IngredientService {
 
     public List<Ingredient> getAll() {
         return repository.findAll();
+    }
+
+    public List<Ingredient> getAll(String search, String spirit, String group, List<String> tastes) {
+        Spirit s = Spirit.findByRuName(spirit);
+        if (tastes == null) {
+            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group);
+        } else {
+            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group, tastes, (long) tastes.size());
+        }
     }
 
     public Ingredient get(Long id) {

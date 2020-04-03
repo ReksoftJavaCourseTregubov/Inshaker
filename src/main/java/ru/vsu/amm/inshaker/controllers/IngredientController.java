@@ -4,10 +4,13 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vsu.amm.inshaker.model.Ingredient;
 import ru.vsu.amm.inshaker.services.IngredientModelAssembler;
 import ru.vsu.amm.inshaker.services.IngredientService;
+
+import java.util.List;
 
 @RestController
 public class IngredientController {
@@ -20,9 +23,12 @@ public class IngredientController {
         this.assembler = assembler;
     }
 
-    @GetMapping("/ingredients")
-    public CollectionModel<EntityModel<Ingredient>> all() {
-        return assembler.toCollectionModel(service.getAll());
+    @GetMapping("/ingredients/")
+    public CollectionModel<EntityModel<Ingredient>> all(@RequestParam(required = false) String search,
+                                                        @RequestParam(required = false) String spirit,
+                                                        @RequestParam(required = false) String group,
+                                                        @RequestParam(required = false) List<String> tastes) {
+        return assembler.toCollectionModel(service.getAll(search, spirit, group, tastes));
     }
 
     @GetMapping("/ingredients/{id}")
