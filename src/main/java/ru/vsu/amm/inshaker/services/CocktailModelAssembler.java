@@ -5,7 +5,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-import ru.vsu.amm.inshaker.controllers.IngredientController;
+import ru.vsu.amm.inshaker.controllers.CocktailController;
 import ru.vsu.amm.inshaker.model.Cocktail;
 
 import java.util.List;
@@ -21,8 +21,8 @@ public class CocktailModelAssembler implements RepresentationModelAssembler<Cock
     @Override
     public EntityModel<Cocktail> toModel(Cocktail entity) {
         return new EntityModel<>(entity,
-                linkTo(methodOn(IngredientController.class).one(entity.getId())).withSelfRel(),
-                linkTo(methodOn(IngredientController.class).all()).withRel("cocktails"));
+                linkTo(methodOn(CocktailController.class).one(entity.getId())).withSelfRel(),
+                linkTo(methodOn(CocktailController.class).all()).withRel("cocktails"));
     }
 
     @Override
@@ -30,7 +30,7 @@ public class CocktailModelAssembler implements RepresentationModelAssembler<Cock
         List<EntityModel<Cocktail>> models = StreamSupport.stream(entities.spliterator(), false)
                 .map(this::toModel)
                 .collect(Collectors.toList());
-        Link link = linkTo(methodOn(IngredientController.class).all()).withSelfRel();
+        Link link = linkTo(methodOn(CocktailController.class).all()).withSelfRel();
         return new CollectionModel<>(models, link);
     }
 

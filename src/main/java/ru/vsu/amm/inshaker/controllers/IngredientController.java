@@ -23,7 +23,12 @@ public class IngredientController {
         this.assembler = assembler;
     }
 
-    @GetMapping("/ingredients/")
+    @GetMapping("/ingredients")
+    public CollectionModel<EntityModel<Ingredient>> all() {
+        return assembler.toCollectionModel(service.getAll());
+    }
+
+    @GetMapping("/ingredients/subset")
     public CollectionModel<EntityModel<Ingredient>> all(@RequestParam(required = false) String search,
                                                         @RequestParam(required = false) String spirit,
                                                         @RequestParam(required = false) String group,
