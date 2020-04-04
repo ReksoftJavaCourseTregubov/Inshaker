@@ -6,14 +6,15 @@ import org.springframework.data.repository.query.Param;
 import ru.vsu.amm.inshaker.model.Ingredient;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     @Query("select distinct t from Ingredient i inner join i.taste t")
-    List<String> findDistinctTastes();
+    Set<String> findDistinctTastes();
 
     @Query("select distinct i.ingredientGroup from Ingredient i")
-    List<String> findDistinctIngredientGroups();
+    Set<String> findDistinctIngredientGroups();
 
     @Query("select i from Ingredient i join i.taste t " +
             "where (:spiritLow is null or :spiritHigh is null or i.spirit between :spiritLow and :spiritHigh) " +

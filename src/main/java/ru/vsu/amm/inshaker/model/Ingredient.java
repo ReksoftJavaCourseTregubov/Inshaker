@@ -1,5 +1,6 @@
 package ru.vsu.amm.inshaker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -27,6 +28,7 @@ public class Ingredient {
     @ElementCollection
     private Set<String> taste;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "ingredient")
     private Set<Recipe> recipe;
 

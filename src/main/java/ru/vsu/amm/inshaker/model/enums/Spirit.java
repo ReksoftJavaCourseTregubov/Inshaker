@@ -8,6 +8,7 @@ public enum Spirit {
     MEDIUM("Средние", (byte) 13, (byte) 25),
     LIGHT("Лёгкие", (byte) 1, (byte) 12),
     FREE("Безалкогольные", (byte) 0, (byte) 0),
+    TABLEWARE("Посуда", (byte) -1, (byte) -1),
     ANY("Любые", Byte.MIN_VALUE, Byte.MAX_VALUE);
 
     private final String ruName;

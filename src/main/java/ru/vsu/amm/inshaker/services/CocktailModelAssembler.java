@@ -22,7 +22,7 @@ public class CocktailModelAssembler implements RepresentationModelAssembler<Cock
     public EntityModel<Cocktail> toModel(Cocktail entity) {
         return new EntityModel<>(entity,
                 linkTo(methodOn(CocktailController.class).one(entity.getId())).withSelfRel(),
-                linkTo(methodOn(CocktailController.class).all()).withRel("cocktails"));
+                linkTo(methodOn(CocktailController.class).all(null, null, null, null, null)).withRel("cocktails"));
     }
 
     @Override
@@ -30,7 +30,7 @@ public class CocktailModelAssembler implements RepresentationModelAssembler<Cock
         List<EntityModel<Cocktail>> models = StreamSupport.stream(entities.spliterator(), false)
                 .map(this::toModel)
                 .collect(Collectors.toList());
-        Link link = linkTo(methodOn(CocktailController.class).all()).withSelfRel();
+        Link link = linkTo(methodOn(CocktailController.class).all(null, null, null, null, null)).withSelfRel();
         return new CollectionModel<>(models, link);
     }
 

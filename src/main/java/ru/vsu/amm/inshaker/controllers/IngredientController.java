@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vsu.amm.inshaker.model.Ingredient;
-import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.services.IngredientModelAssembler;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -25,12 +23,12 @@ public class IngredientController {
         this.assembler = assembler;
     }
 
-    @GetMapping("/ingredients")
+    @GetMapping("/ingredients/all")
     public CollectionModel<EntityModel<Ingredient>> all() {
         return assembler.toCollectionModel(service.getAll());
     }
 
-    @GetMapping("/ingredients/subset")
+    @GetMapping("/ingredients")
     public CollectionModel<EntityModel<Ingredient>> all(@RequestParam(required = false) String search,
                                                         @RequestParam(required = false) String spirit,
                                                         @RequestParam(required = false) String group,
@@ -54,8 +52,8 @@ public class IngredientController {
     }
 
     @GetMapping("/ingredients/spirits")
-    public CollectionModel<Spirit> spirits() {
-        return assembler.spiritsToCollectionModel(Arrays.asList(Spirit.values()));
+    public CollectionModel<String> spirits() {
+        return assembler.spiritsToCollectionModel(service.getSpirits());
     }
 
 }

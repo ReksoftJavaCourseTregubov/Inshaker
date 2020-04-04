@@ -17,8 +17,6 @@ public class Cocktail {
     private String nameRu;
     private String nameEn;
 
-    @JsonIgnoreProperties({"ingredientGroup", "country", "ingredientCategory",
-            "subgroup", "legend", "taste", "spirit", "recipe", "nameEn", "imageRef", "base"})
     @ManyToOne
     private Ingredient base;
     private String cocktailGroup;
@@ -27,19 +25,16 @@ public class Cocktail {
 
     private String mixingMethod;
 
-    @JsonIgnoreProperties({"ingredientGroup", "country", "ingredientCategory",
-            "subgroup", "legend", "taste", "spirit", "recipe", "nameEn", "imageRef", "base"})
     @ManyToOne
     private Ingredient glass;
 
-    @JsonIgnoreProperties({"ingredientGroup", "country", "ingredientCategory",
-            "subgroup", "legend", "taste", "spirit", "recipe", "nameEn", "imageRef", "base"})
     @ManyToOne
     private Ingredient garnish;
 
     @ElementCollection
     private Set<String> taste;
 
+    @JsonIgnoreProperties("cocktail")
     @OneToMany(mappedBy = "cocktail")
     private Set<Recipe> recipe;
 
