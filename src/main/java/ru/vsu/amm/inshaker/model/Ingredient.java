@@ -3,7 +3,7 @@ package ru.vsu.amm.inshaker.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -25,7 +25,10 @@ public class Ingredient {
     private String country;
 
     @ElementCollection
-    private List<String> taste;
+    private Set<String> taste;
+
+    @OneToMany(mappedBy = "ingredient")
+    private Set<Recipe> recipe;
 
     private String legend;
 

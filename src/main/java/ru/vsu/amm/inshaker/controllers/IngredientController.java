@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vsu.amm.inshaker.model.Ingredient;
+import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.services.IngredientModelAssembler;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -49,6 +51,11 @@ public class IngredientController {
     @GetMapping("/ingredients/tastes")
     public CollectionModel<String> tastes() {
         return assembler.tastesToCollectionModel(service.getTastes());
+    }
+
+    @GetMapping("/ingredients/spirits")
+    public CollectionModel<Spirit> spirits() {
+        return assembler.spiritsToCollectionModel(Arrays.asList(Spirit.values()));
     }
 
 }

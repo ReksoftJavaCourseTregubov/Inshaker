@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Spirit {
-    STRONG("Крепкие", (byte) 30, (byte) 100),
-    MEDIUM("Средние", (byte) 15, (byte) 29),
-    LIGHT("Лёгкие", (byte) 1, (byte) 14),
+    STRONG("Крепкие", (byte) 26, (byte) 100),
+    MEDIUM("Средние", (byte) 13, (byte) 25),
+    LIGHT("Лёгкие", (byte) 1, (byte) 12),
     FREE("Безалкогольные", (byte) 0, (byte) 0),
     ANY("Любые", Byte.MIN_VALUE, Byte.MAX_VALUE);
 

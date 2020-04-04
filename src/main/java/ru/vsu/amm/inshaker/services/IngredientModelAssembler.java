@@ -7,6 +7,7 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ru.vsu.amm.inshaker.controllers.IngredientController;
 import ru.vsu.amm.inshaker.model.Ingredient;
+import ru.vsu.amm.inshaker.model.enums.Spirit;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +42,12 @@ public class IngredientModelAssembler implements RepresentationModelAssembler<In
     }
 
     public CollectionModel<String> groupsToCollectionModel(Iterable<String> entities) {
+        return new CollectionModel<>(entities,
+                linkTo(methodOn(IngredientController.class).groups()).withSelfRel(),
+                linkTo(methodOn(IngredientController.class).all()).withRel("ingredients"));
+    }
+
+    public CollectionModel<Spirit> spiritsToCollectionModel(List<Spirit> entities) {
         return new CollectionModel<>(entities,
                 linkTo(methodOn(IngredientController.class).groups()).withSelfRel(),
                 linkTo(methodOn(IngredientController.class).all()).withRel("ingredients"));
