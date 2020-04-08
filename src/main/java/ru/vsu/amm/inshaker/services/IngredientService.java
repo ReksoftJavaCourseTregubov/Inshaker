@@ -20,10 +20,6 @@ public class IngredientService {
         this.repository = repository;
     }
 
-    public List<Ingredient> getAll() {
-        return repository.findAll();
-    }
-
     public List<Ingredient> getAll(String search, String spirit, String group, List<String> tastes) {
         if (search == null && spirit == null && group == null && tastes == null) {
             return repository.findAll();
