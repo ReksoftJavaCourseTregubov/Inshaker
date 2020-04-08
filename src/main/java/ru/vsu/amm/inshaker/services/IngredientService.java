@@ -1,8 +1,10 @@
 package ru.vsu.amm.inshaker.services;
 
+import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.exceptions.IngredientNotFoundException;
-import ru.vsu.amm.inshaker.model.Ingredient;
+import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
+import ru.vsu.amm.inshaker.model.dto.IngredientDTO;
+import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.repositories.IngredientRepository;
 
@@ -15,26 +17,32 @@ import java.util.stream.Collectors;
 public class IngredientService {
 
     private final IngredientRepository repository;
+    private final Mapper mapper;
 
-    public IngredientService(IngredientRepository repository) {
+    public IngredientService(IngredientRepository repository, Mapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
-    public List<Ingredient> getAll(String search, String spirit, String group, List<String> tastes) {
+    public List<IngredientSimpleDTO> getAll(String search, String spirit, String group, List<String> tastes) {
         if (search == null && spirit == null && group == null && tastes == null) {
-            return repository.findAll();
+            return repository.findAll().stream()
+                    .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toList());
         }
 
         Spirit s = Spirit.findByRuName(spirit);
         if (tastes == null) {
-            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group);
+            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group).stream()
+                    .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toList());
         } else {
-            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group, tastes, (long) tastes.size());
+            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group, tastes, (long) tastes.size()).stream()
+                    .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toList());
         }
     }
 
-    public Ingredient get(Long id) {
-        return repository.findById(id).orElseThrow(() -> new IngredientNotFoundException(id));
+    public IngredientDTO get(Long id) {
+        return mapper.map(repository.findById(id)
+                .orElseThrow(() -> new CocktailNotFoundException(id)), IngredientDTO.class);
     }
 
     public Set<String> getIngredientsGroups() {

@@ -4,7 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.vsu.amm.inshaker.model.Cocktail;
+import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
+import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.CocktailService;
 
 import java.util.List;
@@ -20,16 +21,16 @@ public class CocktailController {
     }
 
     @GetMapping("/cocktails")
-    public List<Cocktail> all(@RequestParam(required = false) String search,
-                              @RequestParam(required = false) String base,
-                              @RequestParam(required = false) String spirit,
-                              @RequestParam(required = false) String group,
-                              @RequestParam(required = false) List<String> tastes) {
+    public List<CocktailSimpleDTO> all(@RequestParam(required = false) String search,
+                                       @RequestParam(required = false) String base,
+                                       @RequestParam(required = false) String spirit,
+                                       @RequestParam(required = false) String group,
+                                       @RequestParam(required = false) List<String> tastes) {
         return service.getAll(search, base, spirit, group, tastes);
     }
 
     @GetMapping("/cocktails/{id}")
-    public Cocktail one(@PathVariable Long id) {
+    public CocktailDTO one(@PathVariable Long id) {
         return service.get(id);
     }
 

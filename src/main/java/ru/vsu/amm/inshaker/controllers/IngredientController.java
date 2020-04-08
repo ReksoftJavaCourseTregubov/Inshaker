@@ -4,7 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.vsu.amm.inshaker.model.Ingredient;
+import ru.vsu.amm.inshaker.model.dto.IngredientDTO;
+import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
 import java.util.List;
@@ -20,15 +21,15 @@ public class IngredientController {
     }
 
     @GetMapping("/ingredients")
-    public List<Ingredient> all(@RequestParam(required = false) String search,
-                                @RequestParam(required = false) String spirit,
-                                @RequestParam(required = false) String group,
-                                @RequestParam(required = false) List<String> tastes) {
+    public List<IngredientSimpleDTO> all(@RequestParam(required = false) String search,
+                                         @RequestParam(required = false) String spirit,
+                                         @RequestParam(required = false) String group,
+                                         @RequestParam(required = false) List<String> tastes) {
         return service.getAll(search, spirit, group, tastes);
     }
 
     @GetMapping("/ingredients/{id}")
-    public Ingredient one(@PathVariable Long id) {
+    public IngredientDTO one(@PathVariable Long id) {
         return service.get(id);
     }
 
