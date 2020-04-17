@@ -39,4 +39,6 @@ public class CocktailDTO {
 
     private String imageRef;
 
+    private boolean isFavorite;
+
 }

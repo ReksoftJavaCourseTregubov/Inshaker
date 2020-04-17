@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.services;
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
+import ru.vsu.amm.inshaker.model.Ingredient;
 import ru.vsu.amm.inshaker.model.dto.IngredientDTO;
 import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
@@ -24,20 +25,22 @@ public class IngredientService {
         this.mapper = mapper;
     }
 
-    public List<IngredientSimpleDTO> getAll(String search, String spirit, String group, List<String> tastes) {
+    public List<Ingredient> getAllIngredients(String search, String spirit, String group, List<String> tastes) {
         if (search == null && spirit == null && group == null && tastes == null) {
-            return repository.findAll().stream()
-                    .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toList());
+            return repository.findAll();
         }
 
         Spirit s = Spirit.findByRuName(spirit);
         if (tastes == null) {
-            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group).stream()
-                    .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toList());
+            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group);
         } else {
-            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group, tastes, (long) tastes.size()).stream()
-                    .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toList());
+            return repository.findAllWithFilters(search, s.getRangeLow(), s.getRangeHigh(), group, tastes, (long) tastes.size());
         }
+    }
+
+    public List<IngredientSimpleDTO> getAll(String search, String spirit, String group, List<String> tastes) {
+        return getAllIngredients(search, spirit, group, tastes).stream()
+                .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toList());
     }
 
     public IngredientDTO get(Long id) {

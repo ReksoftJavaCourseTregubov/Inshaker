@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <title>Spring Security Example </title>
+</head>
+<body>
+<div th:if="${param.errorusername}">
+    A user with the same username already exists.
+</div>
+<div th:if="${param.errorpassword}">
+    You should confirm the password.
+</div>
+<form th:action="@{/registration}" method="post">
+    <div><label> User Name : <input type="text" name="username"/> </label></div>
+    <div><label> Password: <input type="password" name="password"/> </label></div>
+    <div><label> Password Confirm: <input type="password" name="passwordConfirm"/> </label></div>
+    <div><input type="submit" value="Create Account"/></div>
+</form>
+</body>
+</html>
