@@ -1,11 +1,13 @@
 package ru.vsu.amm.inshaker.services;
 
 import org.dozer.Mapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
 import ru.vsu.amm.inshaker.model.Cocktail;
 import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
+import ru.vsu.amm.inshaker.model.dto.CocktailDTOConverter;
 import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.model.user.User;
@@ -25,12 +27,18 @@ public class CocktailService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final Mapper mapper;
+    private final CocktailDTOConverter cocktailDTOConverter;
 
-    public CocktailService(CocktailRepository cocktailRepository, UserRepository userRepository, UserService userService, Mapper mapper) {
+    public CocktailService(CocktailRepository cocktailRepository,
+                           UserRepository userRepository,
+                           UserService userService,
+                           Mapper mapper,
+                           CocktailDTOConverter cocktailDTOConverter) {
         this.cocktailRepository = cocktailRepository;
         this.userRepository = userRepository;
         this.userService = userService;
         this.mapper = mapper;
+        this.cocktailDTOConverter = cocktailDTOConverter;
     }
 
     public List<Cocktail> getAllCocktails(String search, String base, String spirit, String group, List<String> tastes) {
@@ -101,6 +109,25 @@ public class CocktailService {
         User currentUser = userService.getCurrentUser();
         currentUser.getFavorite().remove(getCocktail(cocktailId));
         userRepository.save(currentUser);
+    }
+
+    public CocktailDTO add(CocktailDTO cocktail) {
+        Cocktail newCocktail = cocktailDTOConverter.convert(cocktail);
+        newCocktail.setId(null);
+        return mapper.map(cocktailRepository.save(newCocktail), CocktailDTO.class);
+    }
+
+    public CocktailDTO update(CocktailDTO newCocktail, Long id) {
+        return cocktailRepository.findById(id)
+                .map(oldCocktail -> {
+                    BeanUtils.copyProperties(cocktailDTOConverter.convert(newCocktail), oldCocktail);
+                    oldCocktail.setId(id);
+                    return mapper.map(cocktailRepository.save(oldCocktail), CocktailDTO.class);
+                }).orElseThrow(() -> new CocktailNotFoundException(id));
+    }
+
+    public void delete(Long id) {
+        cocktailRepository.deleteById(id);
     }
 
 }

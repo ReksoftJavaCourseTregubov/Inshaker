@@ -29,7 +29,7 @@ public class Ingredient {
     private Set<String> taste;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "ingredient")
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
     private Set<Recipe> recipe;
 
     private String legend;

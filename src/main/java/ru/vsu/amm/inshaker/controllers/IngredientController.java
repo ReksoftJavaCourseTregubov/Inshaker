@@ -1,13 +1,11 @@
 package ru.vsu.amm.inshaker.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.model.dto.IngredientDTO;
 import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.Set;
 
@@ -28,9 +26,27 @@ public class IngredientController {
         return service.getAll(search, spirit, group, tastes);
     }
 
+    @RolesAllowed("ROLE_ADMIN")
+    @PostMapping("/ingredients")
+    public IngredientDTO add(@RequestBody IngredientDTO ingredient) {
+        return service.add(ingredient);
+    }
+
     @GetMapping("/ingredients/{id}")
     public IngredientDTO one(@PathVariable Long id) {
         return service.get(id);
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @PutMapping("/ingredients/{id}")
+    IngredientDTO update(@RequestBody IngredientDTO ingredient, @PathVariable Long id) {
+        return service.update(ingredient, id);
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @DeleteMapping("/ingredients/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 
     @GetMapping("/ingredients/groups")

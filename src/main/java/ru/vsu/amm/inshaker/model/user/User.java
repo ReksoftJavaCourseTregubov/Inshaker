@@ -9,6 +9,7 @@ import java.util.Set;
 @Data
 @Entity
 public class User {
+
     @Id
     @GeneratedValue
     private Long id;

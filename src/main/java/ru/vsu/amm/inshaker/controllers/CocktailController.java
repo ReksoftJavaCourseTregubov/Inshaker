@@ -1,13 +1,11 @@
 package ru.vsu.amm.inshaker.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
 import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.CocktailService;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +27,27 @@ public class CocktailController {
         return service.getAll(search, base, spirit, group, tastes);
     }
 
+    @RolesAllowed("ROLE_ADMIN")
+    @PostMapping("/cocktails")
+    public CocktailDTO add(@RequestBody CocktailDTO cocktail) {
+        return service.add(cocktail);
+    }
+
     @GetMapping("/cocktails/{id}")
     public CocktailDTO one(@PathVariable Long id) {
         return service.get(id);
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @PutMapping("/cocktails/{id}")
+    CocktailDTO update(@RequestBody CocktailDTO cocktail, @PathVariable Long id) {
+        return service.update(cocktail, id);
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @DeleteMapping("/cocktails/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 
     @GetMapping("/cocktails/bases")
