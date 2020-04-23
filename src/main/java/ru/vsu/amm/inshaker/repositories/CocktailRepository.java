@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.vsu.amm.inshaker.model.Cocktail;
+import ru.vsu.amm.inshaker.model.Ingredient;
 import ru.vsu.amm.inshaker.model.user.User;
 
 import java.util.List;
@@ -47,6 +48,12 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
                                       @Param("spiritLow") Byte spiritLow,
                                       @Param("spiritHigh") Byte spiritHigh,
                                       @Param("group") String group);
+
+    @Query("select c from Cocktail c join c.recipe r " +
+            "where (c.author is null) and r.ingredient in (:bar) " +
+            "group by c having count(r) + (case when :tolerance is null then 0 else :tolerance end) >= r.size")
+    List<Cocktail> canBeMadeFrom(@Param("bar") Set<Ingredient> bar,
+                                 @Param("tolerance") Long tolerance);
 
     @Query("select distinct c.base.subgroup from Cocktail c")
     Set<String> findDistinctBases();
