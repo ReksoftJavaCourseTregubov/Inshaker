@@ -50,6 +50,11 @@ public class CocktailController {
         service.delete(id);
     }
 
+    @GetMapping("/cocktails/popular")
+    public List<CocktailSimpleDTO> popular(@RequestParam(required = false) Integer limit) {
+        return service.getPopular(limit == null ? 16 : limit);
+    }
+
     @GetMapping("/cocktails/bases")
     public Set<String> bases() {
         return service.getBases();

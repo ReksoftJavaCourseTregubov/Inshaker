@@ -26,4 +26,6 @@ public class IngredientDTO {
 
     private String imageRef;
 
+    private boolean isInBar;
+
 }
