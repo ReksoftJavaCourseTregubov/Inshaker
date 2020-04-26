@@ -3,9 +3,10 @@ package ru.vsu.amm.inshaker.controllers.user_functions;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
 import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.services.CocktailService;
+import ru.vsu.amm.inshaker.services.user_functions.CustomCocktailService;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -13,9 +14,9 @@ import java.util.List;
 @RequestMapping("/user/cocktails")
 public class UserCocktailController {
 
-    private final CocktailService service;
+    private final CustomCocktailService service;
 
-    public UserCocktailController(CocktailService service) {
+    public UserCocktailController(CustomCocktailService service) {
         this.service = service;
     }
 
@@ -29,7 +30,7 @@ public class UserCocktailController {
     }
 
     @PostMapping
-    public CocktailDTO add(@RequestBody CocktailDTO cocktail) {
+    public CocktailDTO add(@RequestBody @Valid CocktailDTO cocktail) {
         return service.addCustom(cocktail);
     }
 
@@ -39,7 +40,7 @@ public class UserCocktailController {
     }
 
     @PutMapping("/{id}")
-    CocktailDTO update(@RequestBody CocktailDTO cocktail, @PathVariable Long id) {
+    CocktailDTO update(@RequestBody @Valid CocktailDTO cocktail, @PathVariable Long id) {
         return service.updateCustom(cocktail, id);
     }
 

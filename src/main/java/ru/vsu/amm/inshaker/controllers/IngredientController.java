@@ -6,6 +6,7 @@ import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class IngredientController {
 
     @RolesAllowed("ROLE_ADMIN")
     @PostMapping("/ingredients")
-    public IngredientDTO add(@RequestBody IngredientDTO ingredient) {
+    public IngredientDTO add(@RequestBody @Valid IngredientDTO ingredient) {
         return service.add(ingredient);
     }
 
@@ -39,7 +40,7 @@ public class IngredientController {
 
     @RolesAllowed("ROLE_ADMIN")
     @PutMapping("/ingredients/{id}")
-    IngredientDTO update(@RequestBody IngredientDTO ingredient, @PathVariable Long id) {
+    IngredientDTO update(@RequestBody @Valid IngredientDTO ingredient, @PathVariable Long id) {
         return service.update(ingredient, id);
     }
 

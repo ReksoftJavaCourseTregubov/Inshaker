@@ -2,7 +2,7 @@ package ru.vsu.amm.inshaker.controllers.user_functions;
 
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.services.CocktailService;
+import ru.vsu.amm.inshaker.services.user_functions.FavoriteService;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.Set;
@@ -12,9 +12,9 @@ import java.util.Set;
 @RequestMapping("/user/favorites")
 public class UserFavoriteController {
 
-    private final CocktailService service;
+    private final FavoriteService service;
 
-    public UserFavoriteController(CocktailService service) {
+    public UserFavoriteController(FavoriteService service) {
         this.service = service;
     }
 

@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Data
@@ -17,6 +18,7 @@ public class Role {
     @GeneratedValue
     private Long id;
 
+    @NotBlank
     private String name;
 
     @ManyToMany(mappedBy = "roles")

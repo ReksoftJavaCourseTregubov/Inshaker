@@ -6,6 +6,8 @@ import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.CocktailService;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +31,7 @@ public class CocktailController {
 
     @RolesAllowed("ROLE_ADMIN")
     @PostMapping("/cocktails")
-    public CocktailDTO add(@RequestBody CocktailDTO cocktail) {
+    public CocktailDTO add(@RequestBody @Valid CocktailDTO cocktail) {
         return service.add(cocktail);
     }
 
@@ -40,7 +42,7 @@ public class CocktailController {
 
     @RolesAllowed("ROLE_ADMIN")
     @PutMapping("/cocktails/{id}")
-    CocktailDTO update(@RequestBody CocktailDTO cocktail, @PathVariable Long id) {
+    CocktailDTO update(@RequestBody @Valid CocktailDTO cocktail, @PathVariable Long id) {
         return service.update(cocktail, id);
     }
 
@@ -51,7 +53,7 @@ public class CocktailController {
     }
 
     @GetMapping("/cocktails/popular")
-    public List<CocktailSimpleDTO> popular(@RequestParam(required = false) Integer limit) {
+    public List<CocktailSimpleDTO> popular(@RequestParam(required = false) @Positive Integer limit) {
         return service.getPopular(limit == null ? 16 : limit);
     }
 

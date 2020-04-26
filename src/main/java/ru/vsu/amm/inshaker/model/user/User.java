@@ -5,6 +5,7 @@ import ru.vsu.amm.inshaker.model.Cocktail;
 import ru.vsu.amm.inshaker.model.Ingredient;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Data
@@ -15,10 +16,13 @@ public class User {
     @GeneratedValue
     private Long id;
 
+    @NotBlank
     private String username;
 
+    @NotBlank
     private String password;
 
+    @NotBlank
     @Transient
     private String passwordConfirm;
 

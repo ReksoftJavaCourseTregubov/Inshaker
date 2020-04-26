@@ -4,7 +4,6 @@ import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
@@ -129,62 +128,5 @@ public class CocktailService {
     public Set<String> getSpirits() {
         return Arrays.stream(Spirit.values()).map(Spirit::getRuName).collect(Collectors.toSet());
     }
-
-
-    public Set<CocktailSimpleDTO> getFavorites() {
-        return userService.getCurrentUser().getFavorite().stream()
-                .map(c -> mapper.map(c, CocktailSimpleDTO.class)).collect(Collectors.toSet());
-    }
-
-    public void addToFavorite(Long cocktailId) {
-        User currentUser = userService.getCurrentUser();
-        currentUser.getFavorite().add(getCocktail(cocktailId));
-        userRepository.save(currentUser);
-    }
-
-    public void deleteFromFavorite(Long cocktailId) {
-        User currentUser = userService.getCurrentUser();
-        currentUser.getFavorite().remove(getCocktail(cocktailId));
-        userRepository.save(currentUser);
-    }
-
-
-    public CocktailDTO getCustom(Long id) {
-        Cocktail cocktail = getCocktail(id);
-        if (cocktail.getAuthor() == userService.getCurrentUser()) {
-            return mapper.map(cocktail, CocktailDTO.class);
-        } else throw new AccessDeniedException("The user does not have permission to get the cocktail");
-    }
-
-    public List<CocktailSimpleDTO> getAllCustoms(String search, String base, String spirit, String group, List<String> tastes) {
-        return getAllCocktails(userService.getCurrentUser(), search, base, spirit, group, tastes).stream()
-                .map(c -> mapper.map(c, CocktailSimpleDTO.class)).collect(Collectors.toList());
-    }
-
-
-    public CocktailDTO addCustom(CocktailDTO cocktail) {
-        Cocktail newCocktail = cocktailDTOConverter.convert(cocktail);
-        newCocktail.setId(null);
-        newCocktail.setAuthor(userService.getCurrentUser());
-        return mapper.map(cocktailRepository.save(newCocktail), CocktailDTO.class);
-    }
-
-    public CocktailDTO updateCustom(CocktailDTO newCocktail, Long id) {
-        Cocktail oldCocktail = getCocktail(id);
-        User currentUser = userService.getCurrentUser();
-        if (oldCocktail.getAuthor() == currentUser) {
-            BeanUtils.copyProperties(cocktailDTOConverter.convert(newCocktail), oldCocktail);
-            oldCocktail.setId(id);
-            oldCocktail.setAuthor(currentUser);
-            return mapper.map(cocktailRepository.save(oldCocktail), CocktailDTO.class);
-        } else throw new AccessDeniedException("The user does not have permission to update the cocktail");
-    }
-
-    public void deleteCustom(Long id) {
-        Cocktail cocktail = getCocktail(id);
-        if (cocktail.getAuthor() == userService.getCurrentUser()) {
-            cocktailRepository.deleteById(id);
-        } else throw new AccessDeniedException("The user does not have permission to delete the cocktail");
-    }
-
+    
 }

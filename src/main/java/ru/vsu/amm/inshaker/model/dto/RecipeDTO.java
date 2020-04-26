@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.PositiveOrZero;
+
 @Data
 public class RecipeDTO {
 
@@ -15,6 +17,7 @@ public class RecipeDTO {
     @EqualsAndHashCode.Exclude
     private IngredientSimpleDTO ingredient;
 
+    @PositiveOrZero
     private Short amount;
 
 }

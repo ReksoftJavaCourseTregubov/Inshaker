@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
 @Data
@@ -22,6 +23,7 @@ public class Recipe implements Serializable {
     @EqualsAndHashCode.Exclude
     private Ingredient ingredient;
 
+    @PositiveOrZero
     private Short amount;
 
 }

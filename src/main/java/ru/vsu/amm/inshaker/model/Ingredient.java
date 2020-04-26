@@ -2,8 +2,11 @@ package ru.vsu.amm.inshaker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Set;
 
 @Data
@@ -22,18 +25,21 @@ public class Ingredient {
     private String subgroup;
 
     private String base;
+    @PositiveOrZero
     private Byte spirit;
     private String country;
 
     @ElementCollection
     private Set<String> taste;
 
+    @Valid
     @JsonIgnore
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
     private Set<Recipe> recipe;
 
     private String legend;
 
+    @URL
     private String imageRef;
 
 }
