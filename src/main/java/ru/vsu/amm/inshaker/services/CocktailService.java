@@ -4,6 +4,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
@@ -67,6 +68,10 @@ public class CocktailService {
         Cocktail cocktail = getCocktail(id);
         CocktailDTO cocktailDTO = mapper.map(cocktail, CocktailDTO.class);
 
+        if (cocktail.getAuthor() != null) {
+            throw new AccessDeniedException("The user does not have permission to get the cocktail " + id);
+        }
+
         try {
             if (userService.getCurrentUser().getFavorite().contains(cocktail)) {
                 cocktailDTO.setFavorite(true);
@@ -128,5 +133,5 @@ public class CocktailService {
     public Set<String> getSpirits() {
         return Arrays.stream(Spirit.values()).map(Spirit::getRuName).collect(Collectors.toSet());
     }
-    
+
 }

@@ -41,7 +41,7 @@ public class CustomCocktailService {
         Cocktail cocktail = cocktailService.getCocktail(id);
         if (cocktail.getAuthor() == userService.getCurrentUser()) {
             return mapper.map(cocktail, CocktailDTO.class);
-        } else throw new AccessDeniedException("The user does not have permission to get the cocktail");
+        } else throw new AccessDeniedException("The user does not have permission to get the cocktail " + id);
     }
 
     public List<CocktailSimpleDTO> getAllCustoms(String search, String base, String spirit, String group, List<String> tastes) {
@@ -65,14 +65,14 @@ public class CustomCocktailService {
             oldCocktail.setId(id);
             oldCocktail.setAuthor(currentUser);
             return mapper.map(cocktailRepository.save(oldCocktail), CocktailDTO.class);
-        } else throw new AccessDeniedException("The user does not have permission to update the cocktail");
+        } else throw new AccessDeniedException("The user does not have permission to update the cocktail " + id);
     }
 
     public void deleteCustom(Long id) {
         Cocktail cocktail = cocktailService.getCocktail(id);
         if (cocktail.getAuthor() == userService.getCurrentUser()) {
             cocktailRepository.deleteById(id);
-        } else throw new AccessDeniedException("The user does not have permission to delete the cocktail");
+        } else throw new AccessDeniedException("The user does not have permission to delete the cocktail " + id);
     }
 
 }
