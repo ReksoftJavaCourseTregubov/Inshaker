@@ -1,18 +1,19 @@
-package ru.vsu.amm.inshaker.exceptions;
+package ru.vsu.amm.inshaker.exceptions.advices;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class IngredientNotFoundAdvice {
+public class AccessDeniedAdvice {
 
     @ResponseBody
-    @ExceptionHandler(IngredientNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String ingredientNotFoundHandler(IngredientNotFoundException ex) {
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String accessDeniedHandler(AccessDeniedException ex) {
         return ex.getMessage();
     }
 

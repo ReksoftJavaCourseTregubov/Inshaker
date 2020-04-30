@@ -8,6 +8,7 @@ import ru.vsu.amm.inshaker.services.user.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 
 @Controller
 public class UserController {
@@ -26,8 +27,8 @@ public class UserController {
 
     @PostMapping("/registration")
     public String registration(HttpServletRequest request,
-                               @RequestParam("username") String username,
-                               @RequestParam("password") String password,
+                               @RequestParam("username") @NotBlank String username,
+                               @RequestParam("password") @NotBlank String password,
                                @RequestParam("passwordConfirm") String passwordConfirm) throws ServletException {
 
         if (userService.findByUsername(username) != null) {

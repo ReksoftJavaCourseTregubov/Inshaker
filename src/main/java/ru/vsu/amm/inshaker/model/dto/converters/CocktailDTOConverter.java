@@ -1,9 +1,11 @@
-package ru.vsu.amm.inshaker.model.dto;
+package ru.vsu.amm.inshaker.model.dto.converters;
 
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.model.Cocktail;
 import ru.vsu.amm.inshaker.model.Recipe;
+import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
+import ru.vsu.amm.inshaker.model.dto.RecipeDTO;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
 import java.util.Set;

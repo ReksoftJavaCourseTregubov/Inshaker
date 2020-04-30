@@ -2,16 +2,14 @@ package ru.vsu.amm.inshaker.services;
 
 import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
 import ru.vsu.amm.inshaker.model.Cocktail;
 import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.CocktailDTOConverter;
 import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.converters.CocktailDTOConverter;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
@@ -46,7 +44,7 @@ public class CocktailService {
 
 
     public Cocktail getCocktail(Long id) {
-        return cocktailRepository.findById(id)
+        return cocktailRepository.findByIdAndAuthorIsNull(id)
                 .orElseThrow(() -> new CocktailNotFoundException(id));
     }
 
@@ -67,10 +65,6 @@ public class CocktailService {
     public CocktailDTO get(Long id) {
         Cocktail cocktail = getCocktail(id);
         CocktailDTO cocktailDTO = mapper.map(cocktail, CocktailDTO.class);
-
-        if (cocktail.getAuthor() != null) {
-            throw new AccessDeniedException("The user does not have permission to get the cocktail " + id);
-        }
 
         try {
             if (userService.getCurrentUser().getFavorite().contains(cocktail)) {
@@ -93,15 +87,15 @@ public class CocktailService {
     }
 
 
-    public CocktailDTO add(CocktailDTO cocktail) {
+    public CocktailDTO addCocktail(CocktailDTO cocktail, User author) {
         Cocktail newCocktail = cocktailDTOConverter.convert(cocktail);
         newCocktail.setId(null);
-        newCocktail.setAuthor(null);
+        newCocktail.setAuthor(author);
         return mapper.map(cocktailRepository.save(newCocktail), CocktailDTO.class);
     }
 
-    public CocktailDTO update(CocktailDTO newCocktail, Long id) {
-        return cocktailRepository.findById(id)
+    public CocktailDTO updateCocktail(CocktailDTO newCocktail, Long id, User author) {
+        return cocktailRepository.findByIdAndAuthor(id, author)
                 .map(oldCocktail -> {
                     BeanUtils.copyProperties(cocktailDTOConverter.convert(newCocktail), oldCocktail);
                     oldCocktail.setId(id);
@@ -109,12 +103,23 @@ public class CocktailService {
                 }).orElseThrow(() -> new CocktailNotFoundException(id));
     }
 
-    public void delete(Long id) {
-        try {
+    public void deleteCocktail(Long id, User author) {
+        if (cocktailRepository.existsByIdAndAuthor(id, author)) {
             cocktailRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new CocktailNotFoundException(id);
-        }
+        } else throw new CocktailNotFoundException(id);
+    }
+
+
+    public CocktailDTO add(CocktailDTO cocktail) {
+        return addCocktail(cocktail, null);
+    }
+
+    public CocktailDTO update(CocktailDTO newCocktail, Long id) {
+        return updateCocktail(newCocktail, id, null);
+    }
+
+    public void delete(Long id) {
+        deleteCocktail(id, null);
     }
 
 

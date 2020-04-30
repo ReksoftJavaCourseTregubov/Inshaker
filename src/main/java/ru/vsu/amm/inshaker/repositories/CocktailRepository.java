@@ -8,9 +8,16 @@ import ru.vsu.amm.inshaker.model.Ingredient;
 import ru.vsu.amm.inshaker.model.user.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
+
+    Optional<Cocktail> findByIdAndAuthorIsNull(Long id);
+
+    Optional<Cocktail> findByIdAndAuthor(Long id, User author);
+
+    boolean existsByIdAndAuthor(Long id, User author);
 
     List<Cocktail> findAllByAuthorIsNull();
 

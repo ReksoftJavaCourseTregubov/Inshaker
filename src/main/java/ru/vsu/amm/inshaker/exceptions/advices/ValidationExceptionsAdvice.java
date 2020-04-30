@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.exceptions;
+package ru.vsu.amm.inshaker.exceptions.advices;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;

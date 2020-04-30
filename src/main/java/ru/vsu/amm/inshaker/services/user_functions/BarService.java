@@ -37,7 +37,7 @@ public class BarService {
 
     public Set<IngredientSimpleDTO> getBar() {
         return userService.getCurrentUser().getBar().stream()
-                .map(c -> mapper.map(c, IngredientSimpleDTO.class)).collect(Collectors.toSet());
+                .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toSet());
     }
 
     public void addToBar(Long ingredientId) {
