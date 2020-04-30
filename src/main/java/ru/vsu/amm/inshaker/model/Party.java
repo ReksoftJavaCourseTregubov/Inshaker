@@ -1,0 +1,39 @@
+package ru.vsu.amm.inshaker.model;
+
+import lombok.Data;
+import ru.vsu.amm.inshaker.model.user.User;
+
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.Map;
+import java.util.Set;
+
+@Data
+@Entity
+public class Party {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String name;
+
+    @PositiveOrZero
+    private Short guestsCount;
+
+    @ElementCollection
+    @MapKeyJoinColumn(name = "cocktail_id")
+    private Map<@Valid @NotNull Cocktail, @Positive Short> cocktailAmount;
+
+    private String legend;
+
+    @ManyToOne
+    private User author;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<User> members;
+
+}
