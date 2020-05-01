@@ -3,12 +3,12 @@ package ru.vsu.amm.inshaker.services.user_functions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.exceptions.PartyNotFoundException;
-import ru.vsu.amm.inshaker.exceptions.UserNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.PartyNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.UserNotFoundException;
 import ru.vsu.amm.inshaker.model.Party;
-import ru.vsu.amm.inshaker.model.dto.PartyDTO;
-import ru.vsu.amm.inshaker.model.dto.PartySimpleDTO;
 import ru.vsu.amm.inshaker.model.dto.converters.PartyDTOConverter;
+import ru.vsu.amm.inshaker.model.dto.entire.PartyDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.PartySimpleDTO;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.PartyRepository;
 import ru.vsu.amm.inshaker.repositories.user.UserRepository;
@@ -51,13 +51,13 @@ public class PartyService {
         Party party = getParty(id);
         User currentUser = userService.getCurrentUser();
         if (party.getAuthor() == null || party.getAuthor() == currentUser || party.getMembers().contains(currentUser)) {
-            return converter.convertTo(party);
+            return converter.convert(party);
         } else throw new AccessDeniedException("The user does not have permission to get the party " + id);
     }
 
     public List<PartySimpleDTO> allParties() {
         return getAllParties().stream()
-                .map(converter::convertToSimple).collect(Collectors.toList());
+                .map(converter::convertSimple).collect(Collectors.toList());
     }
 
 
@@ -67,8 +67,7 @@ public class PartyService {
             party.getMembers().add(userRepository.findById(memberId)
                     .orElseThrow(() -> new UserNotFoundException(memberId)));
             partyRepository.save(party);
-
-        }
+        } else throw new AccessDeniedException("User does not have permission to update basic party");
     }
 
     public void dismiss(Long partyId, Long memberId) {
@@ -77,29 +76,34 @@ public class PartyService {
             party.getMembers().remove(userRepository.findById(memberId)
                     .orElseThrow(() -> new UserNotFoundException(memberId)));
             partyRepository.save(party);
-        }
+        } else throw new AccessDeniedException("User does not have permission to update basic party");
     }
 
     public void leave(Long partyId) {
         Party party = getParty(partyId);
-        party.getMembers().remove(userService.getCurrentUser());
-        partyRepository.save(party);
+        User currentUser = userService.getCurrentUser();
+        if (party.getMembers().contains(currentUser)) {
+            party.getMembers().remove(userService.getCurrentUser());
+            partyRepository.save(party);
+        } else throw new AccessDeniedException("User does not have permission to update party");
     }
 
 
     public PartyDTO addParty(PartyDTO party, User author) {
-        Party newCocktail = converter.convertFrom(party);
-        newCocktail.setId(null);
-        newCocktail.setAuthor(author);
-        return converter.convertTo(partyRepository.save(newCocktail));
+        Party newParty = converter.convert(party);
+        System.err.println(newParty.getName());
+        newParty.setId(null);
+        newParty.setAuthor(author);
+        return converter.convert(partyRepository.save(newParty));
     }
 
     public PartyDTO updateParty(PartyDTO newParty, Long id, User author) {
         return partyRepository.findByIdAndAuthor(id, author)
                 .map(oldParty -> {
-                    BeanUtils.copyProperties(converter.convertFrom(newParty), oldParty);
+                    BeanUtils.copyProperties(converter.convert(newParty), oldParty);
                     oldParty.setId(id);
-                    return converter.convertTo(partyRepository.save(oldParty));
+                    oldParty.setAuthor(author);
+                    return converter.convert(partyRepository.save(oldParty));
                 }).orElseThrow(() -> new PartyNotFoundException(id));
     }
 
@@ -111,28 +115,18 @@ public class PartyService {
 
 
     public PartyDTO add(PartyDTO party) {
-        return addParty(party, null);
+        User currentUser = userService.getCurrentUser();
+        return addParty(party, (userService.userHasRole(currentUser, "ROLE_ADMIN") ? null : currentUser));
     }
 
     public PartyDTO update(PartyDTO party, Long id) {
-        return updateParty(party, id, null);
+        User currentUser = userService.getCurrentUser();
+        return updateParty(party, id, (userService.userHasRole(currentUser, "ROLE_ADMIN") ? null : currentUser));
     }
 
     public void delete(Long id) {
-        deleteParty(id, null);
-    }
-
-
-    public PartyDTO addCustom(PartyDTO party) {
-        return addParty(party, userService.getCurrentUser());
-    }
-
-    public PartyDTO updateCustom(PartyDTO party, Long id) {
-        return updateParty(party, id, userService.getCurrentUser());
-    }
-
-    public void deleteCustom(Long id) {
-        deleteParty(id, userService.getCurrentUser());
+        User currentUser = userService.getCurrentUser();
+        deleteParty(id, (userService.userHasRole(currentUser, "ROLE_ADMIN") ? null : currentUser));
     }
 
 }

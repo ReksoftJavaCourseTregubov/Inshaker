@@ -1,8 +1,8 @@
 package ru.vsu.amm.inshaker.controllers.user_functions;
 
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.user_functions.CustomCocktailService;
 
 import javax.annotation.security.RolesAllowed;
@@ -12,11 +12,11 @@ import java.util.List;
 @RestController
 @RolesAllowed("ROLE_USER")
 @RequestMapping("/user/cocktails")
-public class UserCocktailController {
+public class CustomCocktailController {
 
     private final CustomCocktailService service;
 
-    public UserCocktailController(CustomCocktailService service) {
+    public CustomCocktailController(CustomCocktailService service) {
         this.service = service;
     }
 

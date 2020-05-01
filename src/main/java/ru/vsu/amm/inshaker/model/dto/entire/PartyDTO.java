@@ -1,9 +1,11 @@
-package ru.vsu.amm.inshaker.model.dto;
+package ru.vsu.amm.inshaker.model.dto.entire;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +21,7 @@ public class PartyDTO {
     private Short guestsCount;
 
     @JsonIgnoreProperties("recipe")
-    private List<@Valid CocktailSimpleDTO> cocktailAmount;
+    private List<@Valid @NotNull CocktailSimpleDTO> cocktailAmount;
 
     private String legend;
 

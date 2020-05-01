@@ -1,15 +1,14 @@
 package ru.vsu.amm.inshaker.services;
 
-import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
-import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.CocktailNotFoundException;
 import ru.vsu.amm.inshaker.model.Cocktail;
-import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.model.dto.converters.CocktailDTOConverter;
+import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
@@ -27,19 +26,16 @@ public class CocktailService {
     private final CocktailRepository cocktailRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final Mapper mapper;
-    private final CocktailDTOConverter cocktailDTOConverter;
+    private final CocktailDTOConverter converter;
 
     public CocktailService(CocktailRepository cocktailRepository,
                            UserRepository userRepository,
                            UserService userService,
-                           Mapper mapper,
-                           CocktailDTOConverter cocktailDTOConverter) {
+                           CocktailDTOConverter converter) {
         this.cocktailRepository = cocktailRepository;
         this.userRepository = userRepository;
         this.userService = userService;
-        this.mapper = mapper;
-        this.cocktailDTOConverter = cocktailDTOConverter;
+        this.converter = converter;
     }
 
 
@@ -64,7 +60,7 @@ public class CocktailService {
 
     public CocktailDTO get(Long id) {
         Cocktail cocktail = getCocktail(id);
-        CocktailDTO cocktailDTO = mapper.map(cocktail, CocktailDTO.class);
+        CocktailDTO cocktailDTO = converter.convert(cocktail);
 
         try {
             if (userService.getCurrentUser().getFavorite().contains(cocktail)) {
@@ -78,28 +74,29 @@ public class CocktailService {
 
     public List<CocktailSimpleDTO> getAll(String search, String base, String spirit, String group, List<String> tastes) {
         return getAllCocktails(null, search, base, spirit, group, tastes).stream()
-                .map(c -> mapper.map(c, CocktailSimpleDTO.class)).collect(Collectors.toList());
+                .map(converter::convertSimple).collect(Collectors.toList());
     }
 
     public List<CocktailSimpleDTO> getPopular(int limit) {
         return userRepository.findPopularCocktails(PageRequest.of(0, limit)).stream()
-                .map(c -> mapper.map(c, CocktailSimpleDTO.class)).collect(Collectors.toList());
+                .map(converter::convertSimple).collect(Collectors.toList());
     }
 
 
     public CocktailDTO addCocktail(CocktailDTO cocktail, User author) {
-        Cocktail newCocktail = cocktailDTOConverter.convert(cocktail);
+        Cocktail newCocktail = converter.convert(cocktail);
         newCocktail.setId(null);
         newCocktail.setAuthor(author);
-        return mapper.map(cocktailRepository.save(newCocktail), CocktailDTO.class);
+        return converter.convert(cocktailRepository.save(newCocktail));
     }
 
     public CocktailDTO updateCocktail(CocktailDTO newCocktail, Long id, User author) {
         return cocktailRepository.findByIdAndAuthor(id, author)
                 .map(oldCocktail -> {
-                    BeanUtils.copyProperties(cocktailDTOConverter.convert(newCocktail), oldCocktail);
+                    BeanUtils.copyProperties(converter.convert(newCocktail), oldCocktail);
                     oldCocktail.setId(id);
-                    return mapper.map(cocktailRepository.save(oldCocktail), CocktailDTO.class);
+                    oldCocktail.setAuthor(author);
+                    return converter.convert(cocktailRepository.save(oldCocktail));
                 }).orElseThrow(() -> new CocktailNotFoundException(id));
     }
 

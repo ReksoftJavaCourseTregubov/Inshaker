@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.model.dto;
+package ru.vsu.amm.inshaker.model.dto.simple;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
 package ru.vsu.amm.inshaker.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.model.dto.IngredientDTO;
-import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.IngredientDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
 import javax.annotation.security.RolesAllowed;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
+@RequestMapping("/ingredients")
 public class IngredientController {
 
     private final IngredientService service;
@@ -19,7 +20,7 @@ public class IngredientController {
         this.service = service;
     }
 
-    @GetMapping("/ingredients")
+    @GetMapping
     public List<IngredientSimpleDTO> all(@RequestParam(required = false) String search,
                                          @RequestParam(required = false) String spirit,
                                          @RequestParam(required = false) String group,
@@ -28,39 +29,39 @@ public class IngredientController {
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @PostMapping("/ingredients")
+    @PostMapping
     public IngredientDTO add(@RequestBody @Valid IngredientDTO ingredient) {
         return service.add(ingredient);
     }
 
-    @GetMapping("/ingredients/{id}")
+    @GetMapping("/{id}")
     public IngredientDTO one(@PathVariable Long id) {
         return service.get(id);
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @PutMapping("/ingredients/{id}")
+    @PutMapping("/{id}")
     IngredientDTO update(@RequestBody @Valid IngredientDTO ingredient, @PathVariable Long id) {
         return service.update(ingredient, id);
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @DeleteMapping("/ingredients/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
 
-    @GetMapping("/ingredients/groups")
+    @GetMapping("/groups")
     public Set<String> groups() {
         return service.getIngredientsGroups();
     }
 
-    @GetMapping("/ingredients/tastes")
+    @GetMapping("/tastes")
     public Set<String> tastes() {
         return service.getTastes();
     }
 
-    @GetMapping("/ingredients/spirits")
+    @GetMapping("/spirits")
     public Set<String> spirits() {
         return service.getSpirits();
     }

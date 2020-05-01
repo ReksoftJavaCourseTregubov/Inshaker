@@ -3,9 +3,9 @@ package ru.vsu.amm.inshaker.model.dto.converters;
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.model.Party;
-import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.model.dto.PartyDTO;
-import ru.vsu.amm.inshaker.model.dto.PartySimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.PartyDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.PartySimpleDTO;
 
 import java.util.stream.Collectors;
 
@@ -18,7 +18,7 @@ public class PartyDTOConverter {
         this.mapper = mapper;
     }
 
-    public PartyDTO convertTo(Party party) {
+    public PartyDTO convert(Party party) {
         PartyDTO result = mapper.map(party, PartyDTO.class);
         result.setCocktailAmount(party.getCocktailAmount().keySet().stream()
                 .map(i -> mapper.map(i, CocktailSimpleDTO.class))
@@ -26,11 +26,11 @@ public class PartyDTOConverter {
         return result;
     }
 
-    public Party convertFrom(PartyDTO party) {
+    public Party convert(PartyDTO party) {
         return mapper.map(party, Party.class);
     }
 
-    public PartySimpleDTO convertToSimple(Party party) {
+    public PartySimpleDTO convertSimple(Party party) {
         PartySimpleDTO result = mapper.map(party, PartySimpleDTO.class);
         result.setCocktailsCount(((short) party.getCocktailAmount().size()));
         return result;

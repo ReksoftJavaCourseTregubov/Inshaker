@@ -1,8 +1,8 @@
 package ru.vsu.amm.inshaker.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.CocktailService;
 
 import javax.annotation.security.RolesAllowed;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
+@RequestMapping("/cocktails")
 public class CocktailController {
 
     private final CocktailService service;
@@ -20,7 +21,7 @@ public class CocktailController {
         this.service = service;
     }
 
-    @GetMapping("/cocktails")
+    @GetMapping
     public List<CocktailSimpleDTO> all(@RequestParam(required = false) String search,
                                        @RequestParam(required = false) String base,
                                        @RequestParam(required = false) String spirit,
@@ -30,49 +31,49 @@ public class CocktailController {
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @PostMapping("/cocktails")
+    @PostMapping
     public CocktailDTO add(@RequestBody @Valid CocktailDTO cocktail) {
         return service.add(cocktail);
     }
 
-    @GetMapping("/cocktails/{id}")
+    @GetMapping("/{id}")
     public CocktailDTO one(@PathVariable Long id) {
         return service.get(id);
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @PutMapping("/cocktails/{id}")
+    @PutMapping("/{id}")
     CocktailDTO update(@RequestBody @Valid CocktailDTO cocktail, @PathVariable Long id) {
         return service.update(cocktail, id);
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    @DeleteMapping("/cocktails/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
 
-    @GetMapping("/cocktails/popular")
+    @GetMapping("/popular")
     public List<CocktailSimpleDTO> popular(@RequestParam(required = false) @Positive Integer limit) {
         return service.getPopular(limit == null ? 16 : limit);
     }
 
-    @GetMapping("/cocktails/bases")
+    @GetMapping("/bases")
     public Set<String> bases() {
         return service.getBases();
     }
 
-    @GetMapping("/cocktails/groups")
+    @GetMapping("/groups")
     public Set<String> groups() {
         return service.getCocktailsGroups();
     }
 
-    @GetMapping("/cocktails/tastes")
+    @GetMapping("/tastes")
     public Set<String> tastes() {
         return service.getTastes();
     }
 
-    @GetMapping("/cocktails/spirits")
+    @GetMapping("/spirits")
     public Set<String> spirits() {
         return service.getSpirits();
     }

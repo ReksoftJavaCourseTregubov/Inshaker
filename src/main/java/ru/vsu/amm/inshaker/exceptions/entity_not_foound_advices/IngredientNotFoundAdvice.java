@@ -1,19 +1,19 @@
-package ru.vsu.amm.inshaker.exceptions.advices;
+package ru.vsu.amm.inshaker.exceptions.entity_not_foound_advices;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.IngredientNotFoundException;
 
 @ControllerAdvice
-public class CocktailNotFoundAdvice {
+public class IngredientNotFoundAdvice {
 
     @ResponseBody
-    @ExceptionHandler(CocktailNotFoundException.class)
+    @ExceptionHandler(IngredientNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String cocktailNotFoundHandler(CocktailNotFoundException ex) {
+    public String ingredientNotFoundHandler(IngredientNotFoundException ex) {
         return ex.getMessage();
     }
 

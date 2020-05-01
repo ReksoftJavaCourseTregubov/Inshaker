@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.model.dto;
+package ru.vsu.amm.inshaker.model.dto.entire;
 
 import lombok.Data;
 
@@ -14,5 +14,7 @@ public class UserDTO {
 
     @NotBlank
     private String password;
+
+    private String passwordConfirm;
 
 }

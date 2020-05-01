@@ -2,8 +2,8 @@ package ru.vsu.amm.inshaker.services.user_functions;
 
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.model.dto.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
 import ru.vsu.amm.inshaker.repositories.user.UserRepository;

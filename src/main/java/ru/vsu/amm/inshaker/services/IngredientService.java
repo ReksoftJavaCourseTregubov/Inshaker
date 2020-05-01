@@ -4,11 +4,11 @@ import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
-import ru.vsu.amm.inshaker.exceptions.CocktailNotFoundException;
-import ru.vsu.amm.inshaker.exceptions.IngredientNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.CocktailNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.IngredientNotFoundException;
 import ru.vsu.amm.inshaker.model.Ingredient;
-import ru.vsu.amm.inshaker.model.dto.IngredientDTO;
-import ru.vsu.amm.inshaker.model.dto.IngredientSimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.IngredientDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.IngredientSimpleDTO;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.repositories.IngredientRepository;
 import ru.vsu.amm.inshaker.services.user.UserService;
@@ -89,7 +89,9 @@ public class IngredientService {
     }
 
     public void delete(Long id) {
-        ingredientRepository.deleteById(id);
+        if (ingredientRepository.existsById(id)) {
+            ingredientRepository.deleteById(id);
+        } else throw new IngredientNotFoundException(id);
     }
 
 

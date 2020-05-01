@@ -4,8 +4,9 @@ import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.model.Cocktail;
 import ru.vsu.amm.inshaker.model.Recipe;
-import ru.vsu.amm.inshaker.model.dto.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.RecipeDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.RecipeDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.IngredientService;
 
 import java.util.Set;
@@ -24,14 +25,22 @@ public class CocktailDTOConverter {
 
     public Cocktail convert(CocktailDTO source) {
         Cocktail destination = mapper.map(source, Cocktail.class);
-        destination.setBase(service.getIngredient(source.getBase().getId()));
-        destination.setGlass(service.getIngredient(source.getGlass().getId()));
         try {
+            destination.setBase(service.getIngredient(source.getBase().getId()));
+            destination.setGlass(service.getIngredient(source.getGlass().getId()));
             destination.setGarnish(service.getIngredient(source.getGarnish().getId()));
         } catch (NullPointerException ignored) {
         }
         destination.setRecipe(convert(source.getRecipe(), destination));
         return destination;
+    }
+
+    public CocktailDTO convert(Cocktail source) {
+        return mapper.map(source, CocktailDTO.class);
+    }
+
+    public CocktailSimpleDTO convertSimple(Cocktail source) {
+        return mapper.map(source, CocktailSimpleDTO.class);
     }
 
     private Set<Recipe> convert(Set<RecipeDTO> recipe, Cocktail cocktail) {

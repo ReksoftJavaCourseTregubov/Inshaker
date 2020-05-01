@@ -1,11 +1,12 @@
 package ru.vsu.amm.inshaker.controllers.user_functions;
 
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.model.dto.PartyDTO;
-import ru.vsu.amm.inshaker.model.dto.PartySimpleDTO;
+import ru.vsu.amm.inshaker.model.dto.entire.PartyDTO;
+import ru.vsu.amm.inshaker.model.dto.simple.PartySimpleDTO;
 import ru.vsu.amm.inshaker.services.user_functions.PartyService;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,14 +20,34 @@ public class PartyController {
         this.service = service;
     }
 
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
-    public List<PartySimpleDTO> allParties() {
+    public List<PartySimpleDTO> all() {
         return service.allParties();
     }
 
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
-    public PartyDTO party(@PathVariable Long id) {
+    public PartyDTO one(@PathVariable Long id) {
         return service.oneParty(id);
+    }
+
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    @PostMapping
+    public PartyDTO add(@RequestBody @Valid PartyDTO party) {
+        return service.add(party);
+    }
+
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    @PutMapping("/{id}")
+    PartyDTO update(@RequestBody @Valid PartyDTO cocktail, @PathVariable Long id) {
+        return service.update(cocktail, id);
+    }
+
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 
     @PutMapping("/{id}/invite")

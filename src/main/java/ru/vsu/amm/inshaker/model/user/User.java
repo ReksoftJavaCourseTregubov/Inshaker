@@ -22,10 +22,6 @@ public class User {
     @NotBlank
     private String password;
 
-    @NotBlank
-    @Transient
-    private String passwordConfirm;
-
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Role> roles;
 

@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
+import ru.vsu.amm.inshaker.model.user.Role;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.user.RoleRepository;
 import ru.vsu.amm.inshaker.repositories.user.UserRepository;
@@ -49,6 +50,10 @@ public class UserService {
             throw new AnonymousAuthenticationException(authentication.getDetails().toString());
         }
         return findByUsername(authentication.getName());
+    }
+
+    public boolean userHasRole(User user, String roleName) {
+        return user.getRoles().stream().map(Role::getName).anyMatch(x -> x.equals(roleName));
     }
 
 }

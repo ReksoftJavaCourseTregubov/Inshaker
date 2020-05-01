@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.exceptions.advices;
+package ru.vsu.amm.inshaker.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;

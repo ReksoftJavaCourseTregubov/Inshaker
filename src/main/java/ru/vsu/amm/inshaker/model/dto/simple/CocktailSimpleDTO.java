@@ -1,8 +1,9 @@
-package ru.vsu.amm.inshaker.model.dto;
+package ru.vsu.amm.inshaker.model.dto.simple;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
+import ru.vsu.amm.inshaker.model.dto.entire.RecipeDTO;
 
 import javax.validation.Valid;
 import java.util.Set;

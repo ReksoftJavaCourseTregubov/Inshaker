@@ -1,19 +1,19 @@
-package ru.vsu.amm.inshaker.exceptions.advices;
+package ru.vsu.amm.inshaker.exceptions.entity_not_foound_advices;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.vsu.amm.inshaker.exceptions.IngredientNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.PartyNotFoundException;
 
 @ControllerAdvice
-public class IngredientNotFoundAdvice {
+public class PartyNotFoundAdvice {
 
     @ResponseBody
-    @ExceptionHandler(IngredientNotFoundException.class)
+    @ExceptionHandler(PartyNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String ingredientNotFoundHandler(IngredientNotFoundException ex) {
+    public String partyNotFoundAdvice(PartyNotFoundException ex) {
         return ex.getMessage();
     }
 
