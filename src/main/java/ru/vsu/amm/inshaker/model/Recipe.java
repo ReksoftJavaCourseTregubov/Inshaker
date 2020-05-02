@@ -20,7 +20,6 @@ public class Recipe implements Serializable {
 
     @Id
     @ManyToOne
-    @EqualsAndHashCode.Exclude
     private Ingredient ingredient;
 
     @PositiveOrZero

@@ -91,7 +91,6 @@ public class PartyService {
 
     public PartyDTO addParty(PartyDTO party, User author) {
         Party newParty = converter.convert(party);
-        System.err.println(newParty.getName());
         newParty.setId(null);
         newParty.setAuthor(author);
         return converter.convert(partyRepository.save(newParty));
