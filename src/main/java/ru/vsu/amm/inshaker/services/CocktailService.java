@@ -4,7 +4,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
-import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.CocktailNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.notfound.CocktailNotFoundException;
 import ru.vsu.amm.inshaker.model.Cocktail;
 import ru.vsu.amm.inshaker.model.dto.converters.CocktailDTOConverter;
 import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;

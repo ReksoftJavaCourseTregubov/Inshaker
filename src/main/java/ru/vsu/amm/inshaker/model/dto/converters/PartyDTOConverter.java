@@ -30,6 +30,7 @@ public class PartyDTOConverter {
     }
 
     public PartyDTO convert(Party party) {
+        hidePasswords(party);
         PartyDTO result = mapper.map(party, PartyDTO.class);
         result.setCocktailAmount(party.getCocktailAmount().entrySet().stream()
                 .map(x -> new CocktailAmountDTO(mapper.map(x.getKey(), CocktailSimpleDTO.class), x.getValue()))
@@ -62,9 +63,18 @@ public class PartyDTOConverter {
     }
 
     public PartySimpleDTO convertSimple(Party party) {
+        hidePasswords(party);
         PartySimpleDTO result = mapper.map(party, PartySimpleDTO.class);
         result.setCocktailsCount(((short) party.getCocktailAmount().size()));
         return result;
+    }
+
+    private void hidePasswords(Party party) {
+        try {
+            party.getAuthor().setPassword(null);
+            party.getMembers().forEach(m -> m.setPassword(null));
+        } catch (NullPointerException ignored) {
+        }
     }
 
 }

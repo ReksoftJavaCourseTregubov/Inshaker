@@ -2,7 +2,7 @@ package ru.vsu.amm.inshaker.services.user_functions;
 
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.exceptions.entity_not_foound_exceptions.CocktailNotFoundException;
+import ru.vsu.amm.inshaker.exceptions.notfound.CocktailNotFoundException;
 import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
 import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
