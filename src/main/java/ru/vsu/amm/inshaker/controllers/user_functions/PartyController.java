@@ -1,8 +1,11 @@
 package ru.vsu.amm.inshaker.controllers.user_functions;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.model.dto.entire.PartyDTO;
-import ru.vsu.amm.inshaker.model.dto.simple.PartySimpleDTO;
+import ru.vsu.amm.inshaker.dto.entire.PartyDTO;
+import ru.vsu.amm.inshaker.dto.simple.UserSimpleDTO;
+import ru.vsu.amm.inshaker.dto.simple.PartySimpleDTO;
+import ru.vsu.amm.inshaker.services.user.UserService;
 import ru.vsu.amm.inshaker.services.user_functions.PartyService;
 
 import javax.annotation.security.RolesAllowed;
@@ -11,58 +14,65 @@ import java.util.List;
 
 @RestController
 @RolesAllowed("ROLE_USER")
-@RequestMapping("/user/party")
+@RequestMapping("/party")
 public class PartyController {
 
-    private final PartyService service;
+    private final PartyService partyService;
+    private final UserService userService;
 
-    public PartyController(PartyService service) {
-        this.service = service;
+    public PartyController(PartyService partyService, UserService userService) {
+        this.partyService = partyService;
+        this.userService = userService;
     }
 
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
-    public List<PartySimpleDTO> all() {
-        return service.allParties();
+    public ResponseEntity<List<PartySimpleDTO>> all() {
+        return ResponseEntity.ok(partyService.allParties());
     }
 
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
-    public PartyDTO one(@PathVariable Long id) {
-        return service.oneParty(id);
+    public ResponseEntity<PartyDTO> one(@PathVariable Long id) {
+        return ResponseEntity.ok(partyService.oneParty(id));
     }
 
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @PostMapping
-    public PartyDTO add(@RequestBody @Valid PartyDTO party) {
-        return service.add(party);
+    public ResponseEntity<PartyDTO> add(@RequestBody @Valid PartyDTO party) {
+        return ResponseEntity.ok(partyService.add(party));
     }
 
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/{id}")
     PartyDTO update(@RequestBody @Valid PartyDTO cocktail, @PathVariable Long id) {
-        return service.update(cocktail, id);
+        return partyService.update(cocktail, id);
     }
 
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        partyService.delete(id);
     }
 
     @PutMapping("/{id}/invite")
     public void invite(@PathVariable Long id, @RequestBody Long memberId) {
-        service.invite(id, memberId);
+        partyService.invite(id, memberId);
     }
 
     @PutMapping("/{id}/dismiss")
     public void dismiss(@PathVariable Long id, @RequestBody Long memberId) {
-        service.dismiss(id, memberId);
+        partyService.dismiss(id, memberId);
     }
 
     @PutMapping("/{id}/leave")
     public void leave(@PathVariable Long id) {
-        service.leave(id);
+        partyService.leave(id);
+    }
+
+    @GetMapping("/users")
+    public List<UserSimpleDTO> users() {
+        return userService.getAllUsers();
     }
 
 }

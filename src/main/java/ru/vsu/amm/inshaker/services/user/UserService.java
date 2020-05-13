@@ -1,10 +1,12 @@
 package ru.vsu.amm.inshaker.services.user;
 
+import org.dozer.Mapper;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.vsu.amm.inshaker.dto.simple.UserSimpleDTO;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.model.user.Role;
 import ru.vsu.amm.inshaker.model.user.User;
@@ -13,7 +15,9 @@ import ru.vsu.amm.inshaker.repositories.user.UserRepository;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -21,11 +25,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Mapper mapper;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder,
+                       Mapper mapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
     public void save(String username, String password, Set<String> roles) {
@@ -42,6 +51,13 @@ public class UserService {
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public List<UserSimpleDTO> getAllUsers() {
+        return userRepository.findAllByRole("ROLE_USER")
+                .stream()
+                .map(t -> mapper.map(t, UserSimpleDTO.class))
+                .collect(Collectors.toList());
     }
 
     public User getCurrentUser() {

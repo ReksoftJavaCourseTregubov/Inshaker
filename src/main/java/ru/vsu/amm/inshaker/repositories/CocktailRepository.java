@@ -1,10 +1,13 @@
 package ru.vsu.amm.inshaker.repositories;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.vsu.amm.inshaker.model.Cocktail;
-import ru.vsu.amm.inshaker.model.Ingredient;
+import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
+import ru.vsu.amm.inshaker.model.item.Garnish;
+import ru.vsu.amm.inshaker.model.item.Ingredient;
+import ru.vsu.amm.inshaker.model.item.Tableware;
 import ru.vsu.amm.inshaker.model.user.User;
 
 import java.util.List;
@@ -21,54 +24,22 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
 
     List<Cocktail> findAllByAuthorIsNull();
 
-    @Query("select c from Cocktail c join c.taste t " +
-            "where (:author is null and c.author is null or c.author = :author) " +
-            "and (:spiritLow is null or :spiritHigh is null or c.spirit between :spiritLow and :spiritHigh) " +
-            "and (:base is null or c.base.subgroup = :group) " +
-            "and (:group is null or c.cocktailGroup = :group) " +
-            "and (:search is null " +
-            "or lower(c.nameEn) like lower(concat('%', :search, '%')) " +
-            "or lower(c.nameRu) like lower(concat('%', :search, '%'))" +
-            "or lower(c.subgroup) like lower(concat('%', :search, '%'))) " +
-            "group by c having count(t) >= :tastesCount")
-    List<Cocktail> findAllWithFilters(@Param("author") User author,
-                                      @Param("search") String search,
-                                      @Param("base") String base,
-                                      @Param("spiritLow") Byte spiritLow,
-                                      @Param("spiritHigh") Byte spiritHigh,
-                                      @Param("group") String group,
-                                      @Param("tastes") List<String> tastes,
-                                      @Param("tastesCount") Long tastesCount);
+    List<Cocktail> findAllByAuthor(User author);
 
-    @Query("select c from Cocktail c " +
-            "where (:author is null and c.author is null or c.author = :author) " +
-            "and (:spiritLow is null or :spiritHigh is null or c.spirit between :spiritLow and :spiritHigh) " +
-            "and (:base is null or c.base.subgroup = :group) " +
-            "and (:group is null or c.cocktailGroup = :group) " +
-            "and (:search is null " +
-            "or lower(c.nameEn) like lower(concat('%', :search, '%')) " +
-            "or lower(c.nameRu) like lower(concat('%', :search, '%'))" +
-            "or lower(c.subgroup) like lower(concat('%', :search, '%')))")
-    List<Cocktail> findAllWithFilters(@Param("author") User author,
-                                      @Param("search") String search,
-                                      @Param("base") String base,
-                                      @Param("spiritLow") Byte spiritLow,
-                                      @Param("spiritHigh") Byte spiritHigh,
-                                      @Param("group") String group);
+    List<Cocktail> findAllByGlass(Tableware glass, Pageable pageable);
 
-    @Query("select c from Cocktail c join c.recipe r " +
+    List<Cocktail> findAllByGarnish(Garnish garnish, Pageable pageable);
+
+    @Query("select c from Cocktail c join c.recipePart r where r.ingredient = :ingredient")
+    List<Cocktail> findAllByIngredient(@Param("ingredient") Ingredient ingredient, Pageable pageable);
+
+    @Query("select distinct c from Cocktail c join c.mixingMethod m join m.tableware t where t = :tool")
+    List<Cocktail> findAllByTool(@Param("tool") Tableware tool, Pageable pageable);
+
+    @Query("select c from Cocktail c join c.recipePart r " +
             "where (c.author is null) and r.ingredient in (:bar) " +
             "group by c having count(r) + (case when :tolerance is null then 0 else :tolerance end) >= r.size")
     List<Cocktail> canBeMadeFrom(@Param("bar") Set<Ingredient> bar,
                                  @Param("tolerance") Long tolerance);
-
-    @Query("select distinct c.base.subgroup from Cocktail c")
-    Set<String> findDistinctBases();
-
-    @Query("select distinct c.cocktailGroup from Cocktail c")
-    Set<String> findDistinctCocktailGroups();
-
-    @Query("select distinct t from Cocktail c inner join c.taste t")
-    Set<String> findDistinctTastes();
 
 }

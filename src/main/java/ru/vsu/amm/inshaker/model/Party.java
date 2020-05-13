@@ -1,6 +1,7 @@
 package ru.vsu.amm.inshaker.model;
 
 import lombok.Data;
+import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.user.User;
 
 import javax.persistence.*;

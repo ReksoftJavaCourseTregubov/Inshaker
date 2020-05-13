@@ -1,8 +1,8 @@
 package ru.vsu.amm.inshaker.controllers.user_functions;
 
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.user_functions.CustomCocktailService;
 
 import javax.annotation.security.RolesAllowed;
@@ -21,12 +21,8 @@ public class CustomCocktailController {
     }
 
     @GetMapping
-    public List<CocktailSimpleDTO> all(@RequestParam(required = false) String search,
-                                       @RequestParam(required = false) String base,
-                                       @RequestParam(required = false) String spirit,
-                                       @RequestParam(required = false) String group,
-                                       @RequestParam(required = false) List<String> tastes) {
-        return service.getAllCustoms(search, base, spirit, group, tastes);
+    public List<CocktailSimpleDTO> all() {
+        return service.getAllCustoms();
     }
 
     @PostMapping

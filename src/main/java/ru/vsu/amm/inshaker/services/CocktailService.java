@@ -3,64 +3,54 @@ package ru.vsu.amm.inshaker.services;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.vsu.amm.inshaker.dto.converters.CocktailMapper;
+import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.dto.properties.CocktailPropertiesDTO;
+import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.exceptions.notfound.CocktailNotFoundException;
-import ru.vsu.amm.inshaker.model.Cocktail;
-import ru.vsu.amm.inshaker.model.dto.converters.CocktailDTOConverter;
-import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.model.enums.Spirit;
+import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
+import ru.vsu.amm.inshaker.repositories.SearchRepository;
 import ru.vsu.amm.inshaker.repositories.user.UserRepository;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class CocktailService {
 
     private final CocktailRepository cocktailRepository;
+    private final SearchRepository searchRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final CocktailDTOConverter converter;
+    private final PropertiesService propertiesService;
+    private final CocktailMapper mapper;
 
     public CocktailService(CocktailRepository cocktailRepository,
+                           SearchRepository searchRepository,
                            UserRepository userRepository,
                            UserService userService,
-                           CocktailDTOConverter converter) {
+                           PropertiesService propertiesService,
+                           CocktailMapper mapper) {
         this.cocktailRepository = cocktailRepository;
+        this.searchRepository = searchRepository;
         this.userRepository = userRepository;
         this.userService = userService;
-        this.converter = converter;
+        this.propertiesService = propertiesService;
+        this.mapper = mapper;
     }
-
 
     public Cocktail getCocktail(Long id) {
         return cocktailRepository.findByIdAndAuthorIsNull(id)
                 .orElseThrow(() -> new CocktailNotFoundException(id));
     }
 
-    public List<Cocktail> getAllCocktails(User author, String search, String base, String spirit, String group, List<String> tastes) {
-        if (author == null && search == null && base == null && spirit == null && group == null && tastes == null) {
-            return cocktailRepository.findAllByAuthorIsNull();
-        }
-
-        Spirit s = Spirit.findByRuName(spirit);
-        if (tastes == null) {
-            return cocktailRepository.findAllWithFilters(author, search, base, s.getRangeLow(), s.getRangeHigh(), group);
-        } else {
-            return cocktailRepository.findAllWithFilters(author, search, base, s.getRangeLow(), s.getRangeHigh(), group, tastes, (long) tastes.size());
-        }
-    }
-
-
-    public CocktailDTO get(Long id) {
+    public CocktailDTO getOne(Long id) {
         Cocktail cocktail = getCocktail(id);
-        CocktailDTO cocktailDTO = converter.convert(cocktail);
+        CocktailDTO cocktailDTO = mapper.map(cocktail);
 
         try {
             if (userService.getCurrentUser().getFavorite().contains(cocktail)) {
@@ -72,31 +62,46 @@ public class CocktailService {
         return cocktailDTO;
     }
 
-    public List<CocktailSimpleDTO> getAll(String search, String base, String spirit, String group, List<String> tastes) {
-        return getAllCocktails(null, search, base, spirit, group, tastes).stream()
-                .map(converter::convertSimple).collect(Collectors.toList());
+    public List<CocktailSimpleDTO> getAll() {
+        return cocktailRepository.findAllByAuthorIsNull()
+                .stream()
+                .map(mapper::mapSimple)
+                .collect(Collectors.toList());
+    }
+
+    public List<CocktailSimpleDTO> getAll(String search, Long baseId, Long groupId, Long subgroupId,
+                                          Long spiritId, Long mixingMethodId, List<Long> tasteIds) {
+        return searchRepository
+                .searchCocktails(search, baseId, groupId, subgroupId, spiritId, mixingMethodId, tasteIds)
+                .stream()
+                .map(mapper::mapSimple)
+                .collect(Collectors.toList());
     }
 
     public List<CocktailSimpleDTO> getPopular(int limit) {
         return userRepository.findPopularCocktails(PageRequest.of(0, limit)).stream()
-                .map(converter::convertSimple).collect(Collectors.toList());
+                .map(mapper::mapSimple).collect(Collectors.toList());
+    }
+
+    public CocktailPropertiesDTO getProperties() {
+        return propertiesService.getCocktailProperties();
     }
 
 
     public CocktailDTO addCocktail(CocktailDTO cocktail, User author) {
-        Cocktail newCocktail = converter.convert(cocktail);
+        Cocktail newCocktail = mapper.map(cocktail);
         newCocktail.setId(null);
         newCocktail.setAuthor(author);
-        return converter.convert(cocktailRepository.save(newCocktail));
+        return mapper.map(cocktailRepository.save(newCocktail));
     }
 
     public CocktailDTO updateCocktail(CocktailDTO newCocktail, Long id, User author) {
         return cocktailRepository.findByIdAndAuthor(id, author)
                 .map(oldCocktail -> {
-                    BeanUtils.copyProperties(converter.convert(newCocktail), oldCocktail);
+                    BeanUtils.copyProperties(mapper.map(newCocktail), oldCocktail);
                     oldCocktail.setId(id);
                     oldCocktail.setAuthor(author);
-                    return converter.convert(cocktailRepository.save(oldCocktail));
+                    return mapper.map(cocktailRepository.save(oldCocktail));
                 }).orElseThrow(() -> new CocktailNotFoundException(id));
     }
 
@@ -117,23 +122,6 @@ public class CocktailService {
 
     public void delete(Long id) {
         deleteCocktail(id, null);
-    }
-
-
-    public Set<String> getBases() {
-        return cocktailRepository.findDistinctBases();
-    }
-
-    public Set<String> getCocktailsGroups() {
-        return cocktailRepository.findDistinctCocktailGroups();
-    }
-
-    public Set<String> getTastes() {
-        return cocktailRepository.findDistinctTastes();
-    }
-
-    public Set<String> getSpirits() {
-        return Arrays.stream(Spirit.values()).map(Spirit::getRuName).collect(Collectors.toSet());
     }
 
 }

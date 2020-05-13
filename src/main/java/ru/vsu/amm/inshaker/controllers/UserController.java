@@ -44,11 +44,6 @@ public class UserController {
         return "redirect:/secret";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
     @GetMapping("/secret")
     public String secret() {
         return "secret";

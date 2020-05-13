@@ -1,60 +1,72 @@
 package ru.vsu.amm.inshaker.services.user_functions;
 
-import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.model.dto.simple.IngredientSimpleDTO;
+import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
+import ru.vsu.amm.inshaker.dto.converters.CocktailMapper;
+import ru.vsu.amm.inshaker.dto.converters.ItemMapper;
+import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
 import ru.vsu.amm.inshaker.repositories.user.UserRepository;
-import ru.vsu.amm.inshaker.services.IngredientService;
+import ru.vsu.amm.inshaker.services.ItemService;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class BarService {
 
-    private final IngredientService ingredientService;
+    private final ItemService<Ingredient> itemService;
     private final CocktailRepository cocktailRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final Mapper mapper;
+    private final ItemMapper itemMapper;
+    private final CocktailMapper cocktailMapper;
 
-    public BarService(IngredientService ingredientService,
+    public BarService(ItemService<Ingredient> itemService,
                       CocktailRepository cocktailRepository,
                       UserRepository userRepository,
                       UserService userService,
-                      Mapper mapper) {
-        this.ingredientService = ingredientService;
+                      ItemMapper itemMapper,
+                      CocktailMapper cocktailMapper) {
+        this.itemService = itemService;
         this.cocktailRepository = cocktailRepository;
         this.userRepository = userRepository;
         this.userService = userService;
-        this.mapper = mapper;
+        this.itemMapper = itemMapper;
+        this.cocktailMapper = cocktailMapper;
     }
 
-    public Set<IngredientSimpleDTO> getBar() {
+    public List<ItemDTO> getBar() {
         return userService.getCurrentUser().getBar().stream()
-                .map(i -> mapper.map(i, IngredientSimpleDTO.class)).collect(Collectors.toSet());
+                .map(itemMapper::map).collect(Collectors.toList());
     }
 
-    public void addToBar(Long ingredientId) {
+    public boolean addToBar(Long ingredientId) {
         User currentUser = userService.getCurrentUser();
-        currentUser.getBar().add(ingredientService.getIngredient(ingredientId));
-        userRepository.save(currentUser);
+        boolean isAdded = currentUser.getBar().add(itemService.getItem(ingredientId));
+        if (isAdded) {
+            userRepository.save(currentUser);
+        }
+        return isAdded;
     }
 
-    public void deleteFromBar(Long ingredientId) {
+    public boolean removeFromBar(Long ingredientId) {
         User currentUser = userService.getCurrentUser();
-        currentUser.getBar().remove(ingredientService.getIngredient(ingredientId));
-        userRepository.save(currentUser);
+        boolean isRemoved = currentUser.getBar().remove(itemService.getItem(ingredientId));
+        if (isRemoved) {
+            userRepository.save(currentUser);
+        }
+        return isRemoved;
     }
 
     public List<CocktailSimpleDTO> getAvailableCocktails(Long tolerance) {
-        return cocktailRepository.canBeMadeFrom(userService.getCurrentUser().getBar(), tolerance).stream()
-                .map(c -> mapper.map(c, CocktailSimpleDTO.class)).collect(Collectors.toList());
+        return cocktailRepository.canBeMadeFrom(userService.getCurrentUser().getBar(), tolerance)
+                .stream()
+                .map(cocktailMapper::mapSimple)
+                .collect(Collectors.toList());
     }
 
 }

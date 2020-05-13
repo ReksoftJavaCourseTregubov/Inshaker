@@ -1,8 +1,8 @@
 package ru.vsu.amm.inshaker.model.user;
 
 import lombok.Data;
-import ru.vsu.amm.inshaker.model.Cocktail;
-import ru.vsu.amm.inshaker.model.Ingredient;
+import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
+import ru.vsu.amm.inshaker.model.item.Ingredient;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

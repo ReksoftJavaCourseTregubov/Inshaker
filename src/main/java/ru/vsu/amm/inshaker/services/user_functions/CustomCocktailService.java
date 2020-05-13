@@ -3,8 +3,8 @@ package ru.vsu.amm.inshaker.services.user_functions;
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.exceptions.notfound.CocktailNotFoundException;
-import ru.vsu.amm.inshaker.model.dto.entire.CocktailDTO;
-import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
 import ru.vsu.amm.inshaker.services.CocktailService;
 import ru.vsu.amm.inshaker.services.user.UserService;
@@ -35,9 +35,11 @@ public class CustomCocktailService {
                 .orElseThrow(() -> new CocktailNotFoundException(id)), CocktailDTO.class);
     }
 
-    public List<CocktailSimpleDTO> getAllCustoms(String search, String base, String spirit, String group, List<String> tastes) {
-        return cocktailService.getAllCocktails(userService.getCurrentUser(), search, base, spirit, group, tastes).stream()
-                .map(c -> mapper.map(c, CocktailSimpleDTO.class)).collect(Collectors.toList());
+    public List<CocktailSimpleDTO> getAllCustoms() {
+        return cocktailRepository.findAllByAuthor(userService.getCurrentUser())
+                .stream()
+                .map(c -> mapper.map(c, CocktailSimpleDTO.class))
+                .collect(Collectors.toList());
     }
 
     public CocktailDTO addCustom(CocktailDTO cocktail) {

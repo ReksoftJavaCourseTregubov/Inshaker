@@ -1,18 +1,18 @@
 package ru.vsu.amm.inshaker.controllers.user_functions;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.model.dto.simple.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.model.dto.simple.IngredientSimpleDTO;
+import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
+import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.user_functions.BarService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RolesAllowed("ROLE_USER")
-@RequestMapping("/user/bar")
 public class BarController {
 
     private final BarService service;
@@ -21,24 +21,38 @@ public class BarController {
         this.service = service;
     }
 
-    @GetMapping("/ingredients")
-    public Set<IngredientSimpleDTO> bar() {
-        return service.getBar();
+    @PutMapping("item/{id}/add-to-bar")
+    public ResponseEntity<String> addToBar(@PathVariable Long id) {
+        try {
+            boolean isAdded = service.addToBar(id);
+            if (isAdded) {
+                return ResponseEntity.ok().body("Item " + id + " is added to bar");
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Item " + id + " is always in bar");
+            }
+        } catch (ClassCastException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item " + id + " is not a correct type");
+        }
     }
 
-    @PostMapping("/ingredients")
-    public void addToBar(@RequestBody Long id) {
-        service.addToBar(id);
+    @DeleteMapping("item/{id}/remove-from-bar")
+    public ResponseEntity<String> removeFromBar(@PathVariable Long id) {
+        boolean isRemoved = service.removeFromBar(id);
+        if (isRemoved) {
+            return ResponseEntity.ok().body("Item " + id + " is removed from bar");
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Item " + id + " is not in bar");
+        }
     }
 
-    @DeleteMapping("/ingredients/{id}")
-    public void deleteFromBar(@PathVariable("id") Long id) {
-        service.deleteFromBar(id);
+    @GetMapping("bar/ingredients")
+    public ResponseEntity<List<ItemDTO>> barIngredients() {
+        return ResponseEntity.ok(service.getBar());
     }
 
-    @GetMapping("/cocktails")
-    public List<CocktailSimpleDTO> barCocktails(@RequestParam(required = false) @PositiveOrZero Long tolerance) {
-        return service.getAvailableCocktails(tolerance);
+    @GetMapping("bar/cocktails")
+    public ResponseEntity<List<CocktailSimpleDTO>> barCocktails(@RequestParam(required = false) @PositiveOrZero Long tolerance) {
+        return ResponseEntity.ok(service.getAvailableCocktails(tolerance));
     }
 
 }
