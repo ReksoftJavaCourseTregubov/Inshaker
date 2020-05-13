@@ -28,13 +28,13 @@ public class CocktailController {
 
     @GetMapping("/search")
     public List<CocktailSimpleDTO> search(@RequestParam(required = false) String keyword,
-                                          @RequestParam(required = false) Long baseId,
-                                          @RequestParam(required = false) Long groupId,
-                                          @RequestParam(required = false) Long subgroupId,
-                                          @RequestParam(required = false) Long spiritId,
-                                          @RequestParam(required = false) Long mixingMethodId,
-                                          @RequestParam(required = false) List<Long> tasteIds) {
-        return service.getAll(keyword, baseId, groupId, subgroupId, spiritId, mixingMethodId, tasteIds);
+                                          @RequestParam(required = false) Long base,
+                                          @RequestParam(required = false) Long group,
+                                          @RequestParam(required = false) Long subgroup,
+                                          @RequestParam(required = false) Long spirit,
+                                          @RequestParam(required = false) Long mixingMethod,
+                                          @RequestParam(required = false) List<Long> tastes) {
+        return service.getAll(keyword, base, group, subgroup, spirit, mixingMethod, tastes);
     }
 
     @GetMapping("/{id}")

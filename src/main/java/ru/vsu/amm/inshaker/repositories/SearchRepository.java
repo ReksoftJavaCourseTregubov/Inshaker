@@ -59,7 +59,7 @@ public class SearchRepository {
 
         if (search != null) {
             Predicate itemGroupPredicate = builder.like(builder.lower(item.get("itemSubgroup").get("itemGroup").get("name")), "%" + search.toLowerCase() + "%");
-            predicates.add(builder.or(searchPredicate(builder, item, search), itemGroupPredicate));
+            predicates.add(builder.or(searchPredicate(builder, item, search, "itemSubgroup"), itemGroupPredicate));
         }
 
         query.select(item).where(predicates.toArray(new Predicate[0]));
@@ -104,17 +104,17 @@ public class SearchRepository {
         }
 
         if (search != null) {
-            predicates.add(searchPredicate(builder, cocktail, search));
+            predicates.add(searchPredicate(builder, cocktail, search, "cocktailSubgroup"));
         }
 
         query.select(cocktail).where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
 
-    private Predicate searchPredicate(CriteriaBuilder builder, Root<?> root, String search) {
+    private Predicate searchPredicate(CriteriaBuilder builder, Root<?> root, String search, String subgroupClass) {
         Predicate nameRuPredicate = builder.like(builder.lower(root.get("nameRu")), "%" + search.toLowerCase() + "%");
         Predicate nameEnPredicate = builder.like(builder.lower(root.get("nameEn")), "%" + search.toLowerCase() + "%");
-        Predicate itemSubgroupPredicate = builder.like(builder.lower(root.get("itemSubgroup").get("name")), "%" + search.toLowerCase() + "%");
+        Predicate itemSubgroupPredicate = builder.like(builder.lower(root.get(subgroupClass).get("name")), "%" + search.toLowerCase() + "%");
         return builder.or(nameRuPredicate, nameEnPredicate, itemSubgroupPredicate);
     }
 
