@@ -39,4 +39,7 @@ public class Ingredient extends Item {
     @Transient
     private boolean inBar;
 
+    @Transient
+    private final boolean availableForBar = true;
+
 }

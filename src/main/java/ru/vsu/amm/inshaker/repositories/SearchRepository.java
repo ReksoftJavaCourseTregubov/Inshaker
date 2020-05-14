@@ -88,7 +88,7 @@ public class SearchRepository {
         }
 
         if (groupId != null) {
-            predicates.add(builder.equal(cocktail.get("itemGroup").get("id"), groupId));
+            predicates.add(builder.equal(cocktail.get("cocktailGroup").get("id"), groupId));
         }
 
         if (spiritId != null) {

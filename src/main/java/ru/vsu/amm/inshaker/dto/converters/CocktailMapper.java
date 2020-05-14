@@ -10,7 +10,13 @@ import ru.vsu.amm.inshaker.exceptions.notfound.CocktailNotFoundException;
 import ru.vsu.amm.inshaker.model.RecipePart;
 import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
+import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
+import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
+import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
+import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
+import ru.vsu.amm.inshaker.model.item.Item;
+import ru.vsu.amm.inshaker.model.item.Tableware;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 import ru.vsu.amm.inshaker.services.ItemService;
 
@@ -22,12 +28,12 @@ import java.util.stream.Collectors;
 public class CocktailMapper {
 
     private final PropertiesRepository propertiesRepository;
-    private final ItemService<Ingredient> service;
+    private final ItemService<Item> service;
     private final ItemMapper itemMapper;
     private final Mapper mapper;
 
     public CocktailMapper(PropertiesRepository propertiesRepository,
-                          ItemService<Ingredient> service,
+                          ItemService<Item> service,
                           ItemMapper itemMapper,
                           Mapper mapper) {
         this.propertiesRepository = propertiesRepository;
@@ -38,8 +44,17 @@ public class CocktailMapper {
 
     public Cocktail map(CocktailDTO source) {
         Cocktail destination = mapper.map(source, Cocktail.class);
+
+        destination.setGlass((Tableware) service.getItem(source.getGlass().getId()));
+        destination.setGarnish((Garnish) service.getItem(source.getGarnish().getId()));
+
+        destination.setCocktailSubgroup(find(CocktailSubgroup.class, source.getCocktailSubgroup().getId()));
+        destination.setCocktailGroup(find(CocktailGroup.class, source.getCocktailGroup().getId()));
+        destination.setMixingMethod(find(MixingMethod.class, source.getMixingMethod().getId()));
+
         destination.setTaste(tastes(source));
-        destination.setRecipePart(recipePart(source.getRecipePart(), destination, source.getBase().getId()));
+        destination.setRecipePart((recipePart(source.getRecipePart(), destination, source.getBase().getId())));
+
         return destination;
     }
 
@@ -67,9 +82,14 @@ public class CocktailMapper {
     private Set<RecipePart> recipePart(Set<RecipePartDTO> recipe, Cocktail cocktail, Long baseId) {
         return recipe.stream()
                 .map(dto -> {
-                    RecipePart r = new RecipePart();
-                    r.setCocktail(cocktail);
-                    r.setIngredient(service.getItem(dto.getIngredient().getId()));
+                    RecipePart r = propertiesRepository
+                            .findRecipePartById(cocktail.getId(), dto.getIngredient().getId())
+                            .orElseGet(() -> {
+                                RecipePart s = new RecipePart();
+                                s.setCocktail(cocktail);
+                                s.setIngredient((Ingredient) service.getItem(dto.getIngredient().getId()));
+                                return s;
+                            });
                     r.setAmount(dto.getAmount());
                     r.setIsBase(r.getIngredient().getId().equals(baseId));
                     return r;
@@ -79,9 +99,13 @@ public class CocktailMapper {
     private Set<Taste> tastes(CocktailDTO cocktail) {
         return cocktail.getTaste()
                 .stream()
-                .map(t -> propertiesRepository.findById(Taste.class, t.getId())
-                        .orElseThrow(() -> new CocktailNotFoundException(t.getId())))
+                .map(t -> find(Taste.class, t.getId()))
                 .collect(Collectors.toSet());
+    }
+
+    private <T> T find(Class<T> cls, Long id) {
+        return propertiesRepository.findById(cls, id)
+                .orElseThrow(() -> new CocktailNotFoundException(id));
     }
 
 }

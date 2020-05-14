@@ -98,8 +98,8 @@ public class CocktailService {
     public CocktailDTO updateCocktail(CocktailDTO newCocktail, Long id, User author) {
         return cocktailRepository.findByIdAndAuthor(id, author)
                 .map(oldCocktail -> {
+                    newCocktail.setId(id);
                     BeanUtils.copyProperties(mapper.map(newCocktail), oldCocktail);
-                    oldCocktail.setId(id);
                     oldCocktail.setAuthor(author);
                     return mapper.map(cocktailRepository.save(oldCocktail));
                 }).orElseThrow(() -> new CocktailNotFoundException(id));

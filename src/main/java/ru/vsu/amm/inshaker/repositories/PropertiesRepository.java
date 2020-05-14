@@ -10,6 +10,7 @@ import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,18 @@ public class PropertiesRepository {
 
         Root<T> root = query.from(cls);
         return entityManager.createQuery(query.select(root).distinct(true)).getResultList();
+    }
+
+    public Optional<RecipePart> findRecipePartById(Long cocktailId, Long ingredientId) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<RecipePart> query = builder.createQuery(RecipePart.class);
+
+        Root<RecipePart> root = query.from(RecipePart.class);
+        Predicate equalCocktailId = builder.equal(root.get("cocktail").get("id"), cocktailId);
+        Predicate equalIngredientId = builder.equal(root.get("ingredient").get("id"), ingredientId);
+        query.select(root).where(equalCocktailId, equalIngredientId);
+
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     public List<ItemSubgroup> findDistinctCocktailBases() {
