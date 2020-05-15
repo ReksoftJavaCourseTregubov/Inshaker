@@ -7,12 +7,14 @@ import ru.vsu.amm.inshaker.model.item.Ingredient;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
 @Data
 @Entity
+@IdClass(RecipePartId.class)
 public class RecipePart implements Serializable {
 
     @Id

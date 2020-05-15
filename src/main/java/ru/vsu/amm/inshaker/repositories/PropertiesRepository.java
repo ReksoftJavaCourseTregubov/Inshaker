@@ -1,6 +1,7 @@
 package ru.vsu.amm.inshaker.repositories;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.amm.inshaker.model.RecipePart;
 import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
@@ -8,10 +9,7 @@ import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +50,18 @@ public class PropertiesRepository {
         query.select(root).where(equalCocktailId, equalIngredientId);
 
         return entityManager.createQuery(query).getResultList().stream().findFirst();
+    }
+
+    @Transactional
+    public void deleteRecipePartById(Long cocktailId) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<RecipePart> query = builder.createCriteriaDelete(RecipePart.class);
+        Root<RecipePart> root = query.from(RecipePart.class);
+
+        Predicate equalCocktailId = builder.equal(root.get("cocktail").get("id"), cocktailId);
+        query.where(equalCocktailId);
+
+        entityManager.createQuery(query).executeUpdate();
     }
 
     public List<ItemSubgroup> findDistinctCocktailBases() {

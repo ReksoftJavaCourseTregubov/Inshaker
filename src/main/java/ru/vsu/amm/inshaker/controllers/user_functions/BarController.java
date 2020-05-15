@@ -21,7 +21,7 @@ public class BarController {
         this.service = service;
     }
 
-    @PutMapping("item/{id}/add-to-bar")
+    @PutMapping("items/{id}/add-to-bar")
     public ResponseEntity<String> addToBar(@PathVariable Long id) {
         try {
             boolean isAdded = service.addToBar(id);
@@ -35,7 +35,7 @@ public class BarController {
         }
     }
 
-    @DeleteMapping("item/{id}/remove-from-bar")
+    @DeleteMapping("items/{id}/remove-from-bar")
     public ResponseEntity<String> removeFromBar(@PathVariable Long id) {
         boolean isRemoved = service.removeFromBar(id);
         if (isRemoved) {

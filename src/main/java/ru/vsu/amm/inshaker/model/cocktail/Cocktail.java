@@ -46,7 +46,7 @@ public class Cocktail {
     private Set<Taste> taste;
 
     @JsonIgnoreProperties("cocktail")
-    @OneToMany(mappedBy = "cocktail", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cocktail", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RecipePart> recipePart;
 
     private String legend;

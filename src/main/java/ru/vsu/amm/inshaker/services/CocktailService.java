@@ -1,6 +1,5 @@
 package ru.vsu.amm.inshaker.services;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.CocktailMapper;
@@ -89,8 +88,9 @@ public class CocktailService {
 
 
     public CocktailDTO addCocktail(CocktailDTO cocktail, User author) {
-        Cocktail newCocktail = mapper.map(cocktail);
-        newCocktail.setId(null);
+        cocktail.setId(null);
+        Cocktail newCocktail = new Cocktail();
+        mapper.map(cocktail, newCocktail);
         newCocktail.setAuthor(author);
         return mapper.map(cocktailRepository.save(newCocktail));
     }
@@ -99,7 +99,7 @@ public class CocktailService {
         return cocktailRepository.findByIdAndAuthor(id, author)
                 .map(oldCocktail -> {
                     newCocktail.setId(id);
-                    BeanUtils.copyProperties(mapper.map(newCocktail), oldCocktail);
+                    mapper.map(newCocktail, oldCocktail);
                     oldCocktail.setAuthor(author);
                     return mapper.map(cocktailRepository.save(oldCocktail));
                 }).orElseThrow(() -> new CocktailNotFoundException(id));

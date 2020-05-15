@@ -33,7 +33,7 @@ public class Ingredient extends Item {
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RecipePart> recipePart;
 
     @Transient
