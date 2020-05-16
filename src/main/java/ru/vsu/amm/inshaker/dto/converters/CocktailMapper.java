@@ -108,7 +108,9 @@ public class CocktailMapper {
                                         return s;
                                     });
                             r.setAmount(dto.getAmount());
-                            r.setIsBase(r.getIngredient().getId().equals(source.getBase().getId()));
+                            r.setIsBase(r.getIngredient().getId().equals(Optional.ofNullable(source.getBase())
+                                    .map(ItemDTO::getId)
+                                    .orElse(null)));
                             return r;
                         }).collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
