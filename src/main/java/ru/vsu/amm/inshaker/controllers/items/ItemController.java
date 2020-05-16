@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.controllers;
+package ru.vsu.amm.inshaker.controllers.items;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,19 +7,17 @@ import ru.vsu.amm.inshaker.dto.properties.IngredientPropertiesDTO;
 import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
 import ru.vsu.amm.inshaker.dto.simple.ItemGroupedDTO;
 import ru.vsu.amm.inshaker.model.item.Item;
-import ru.vsu.amm.inshaker.services.ItemService;
+import ru.vsu.amm.inshaker.services.items.ItemService;
 
-import javax.annotation.security.RolesAllowed;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/items")
-public class ItemController {
+public class ItemController<T extends Item> {
 
-    private final ItemService<Item> itemService;
+    private final ItemService<T> itemService;
 
-    public ItemController(ItemService<Item> itemService) {
+    public ItemController(ItemService<T> itemService) {
         this.itemService = itemService;
     }
 
@@ -41,7 +39,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Item> one(@PathVariable Long id) {
+    protected ResponseEntity<T> one(@PathVariable Long id) {
         return ResponseEntity.ok(itemService.getOne(id));
     }
 
@@ -50,19 +48,24 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getProperties());
     }
 
-    @RolesAllowed("ROLE_ADMIN")
-    @PostMapping
-    public ResponseEntity<Item> add(@RequestBody Item item) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(itemService.add(item));
+    protected ResponseEntity<T> add(T item) {
+        T newItem = itemService.add(item);
+        if (newItem != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(newItem);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
     }
 
-    @RolesAllowed("ROLE_ADMIN")
-    @PutMapping("/{id}")
-    public ResponseEntity<Item> update(@PathVariable Long id, @RequestBody @Valid Item item) {
-        return ResponseEntity.ok(itemService.update(id, item));
+    public ResponseEntity<T> update(Long id, T item) {
+        T newItem = itemService.update(id, item);
+        if (newItem != null) {
+            return ResponseEntity.ok(newItem);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
     }
 
-    @RolesAllowed("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         itemService.delete(id);

@@ -2,6 +2,7 @@ package ru.vsu.amm.inshaker.dto.converters;
 
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
+import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.PartyDTO;
 import ru.vsu.amm.inshaker.dto.maps.CocktailAmountDTO;
 import ru.vsu.amm.inshaker.dto.maps.IngredientAmountDTO;
@@ -11,6 +12,7 @@ import ru.vsu.amm.inshaker.model.Party;
 import ru.vsu.amm.inshaker.model.RecipePart;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
+import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.services.CocktailService;
 
 import java.util.*;
@@ -22,9 +24,9 @@ public class PartyMapper {
     private final CocktailService service;
     private final Mapper mapper;
     private final CocktailMapper cocktailMapper;
-    private final ItemMapper itemMapper;
+    private final ItemMapper<Item> itemMapper;
 
-    public PartyMapper(CocktailService service, Mapper mapper, CocktailMapper cocktailMapper, ItemMapper itemMapper) {
+    public PartyMapper(CocktailService service, Mapper mapper, CocktailMapper cocktailMapper, ItemMapper<Item> itemMapper) {
         this.service = service;
         this.mapper = mapper;
         this.cocktailMapper = cocktailMapper;

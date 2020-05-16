@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.services.user_functions;
+package ru.vsu.amm.inshaker.services.userfunctions;
 
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.CocktailMapper;

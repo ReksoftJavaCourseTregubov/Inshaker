@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.services.user_functions;
+package ru.vsu.amm.inshaker.services.userfunctions;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

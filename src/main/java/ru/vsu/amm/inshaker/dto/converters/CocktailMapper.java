@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.dto.converters;
 import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
@@ -15,6 +16,7 @@ import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
 import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
 import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
+import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.model.item.Tableware;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 
@@ -25,11 +27,11 @@ import java.util.stream.Collectors;
 public class CocktailMapper {
 
     private final PropertiesRepository propertiesRepository;
-    private final ItemMapper itemMapper;
+    private final ItemMapper<Item> itemMapper;
     private final Mapper mapper;
 
     public CocktailMapper(PropertiesRepository propertiesRepository,
-                          ItemMapper itemMapper,
+                          ItemMapper<Item> itemMapper,
                           Mapper mapper) {
         this.propertiesRepository = propertiesRepository;
         this.itemMapper = itemMapper;

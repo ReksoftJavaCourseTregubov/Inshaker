@@ -1,15 +1,16 @@
-package ru.vsu.amm.inshaker.services.user_functions;
+package ru.vsu.amm.inshaker.services.userfunctions;
 
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
 import ru.vsu.amm.inshaker.dto.converters.CocktailMapper;
-import ru.vsu.amm.inshaker.dto.converters.ItemMapper;
+import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
+import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
 import ru.vsu.amm.inshaker.repositories.user.UserRepository;
-import ru.vsu.amm.inshaker.services.ItemService;
+import ru.vsu.amm.inshaker.services.items.ItemService;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
 import java.util.List;
@@ -22,14 +23,14 @@ public class BarService {
     private final CocktailRepository cocktailRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final ItemMapper itemMapper;
+    private final ItemMapper<Item> itemMapper;
     private final CocktailMapper cocktailMapper;
 
     public BarService(ItemService<Ingredient> itemService,
                       CocktailRepository cocktailRepository,
                       UserRepository userRepository,
                       UserService userService,
-                      ItemMapper itemMapper,
+                      ItemMapper<Item> itemMapper,
                       CocktailMapper cocktailMapper) {
         this.itemService = itemService;
         this.cocktailRepository = cocktailRepository;

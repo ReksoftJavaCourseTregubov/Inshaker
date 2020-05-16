@@ -1,16 +1,17 @@
-package ru.vsu.amm.inshaker.services;
+package ru.vsu.amm.inshaker.services.items;
 
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
-import ru.vsu.amm.inshaker.exceptions.notfound.ItemNotFoundException;
+import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.properties.IngredientPropertiesDTO;
 import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
 import ru.vsu.amm.inshaker.dto.simple.ItemGroupedDTO;
-import ru.vsu.amm.inshaker.dto.converters.ItemMapper;
+import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
+import ru.vsu.amm.inshaker.exceptions.notfound.ItemNotFoundException;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.repositories.ItemRepository;
 import ru.vsu.amm.inshaker.repositories.SearchRepository;
+import ru.vsu.amm.inshaker.services.PropertiesService;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
 import java.util.Comparator;
@@ -22,20 +23,21 @@ public class ItemService<T extends Item> {
 
     private final UserService userService;
     private final PropertiesService propertiesService;
-    private final ItemRepository<T> itemRepository;
-    private final ItemMapper mapper;
     private final SearchRepository searchRepository;
+    private final ItemRepository<T> itemRepository;
+    private final ItemMapper<T> itemMapper;
+
 
     public ItemService(UserService userService,
                        PropertiesService propertiesService,
+                       SearchRepository searchRepository,
                        ItemRepository<T> itemRepository,
-                       ItemMapper mapper,
-                       SearchRepository searchRepository) {
+                       ItemMapper<T> itemMapper) {
         this.userService = userService;
         this.propertiesService = propertiesService;
-        this.itemRepository = itemRepository;
-        this.mapper = mapper;
         this.searchRepository = searchRepository;
+        this.itemRepository = itemRepository;
+        this.itemMapper = itemMapper;
     }
 
     public T getItem(Long id) {
@@ -43,8 +45,9 @@ public class ItemService<T extends Item> {
                 .orElseThrow(() -> new ItemNotFoundException(id));
     }
 
-    public Item getOne(Long id) {
+    public T getOne(Long id) {
         Item item = getItem(id);
+
 
         if (item instanceof Ingredient) {
             try {
@@ -67,7 +70,7 @@ public class ItemService<T extends Item> {
                 .map(m -> new ItemGroupedDTO(m.getKey().getId(), m.getKey().getName(),
                         m.getValue()
                                 .stream()
-                                .map(mapper::map)
+                                .map(itemMapper::map)
                                 .sorted(Comparator.comparing(ItemDTO::getId))
                                 .collect(Collectors.toList())))
                 .sorted(Comparator.comparing(ItemGroupedDTO::getGroupId))
@@ -78,7 +81,7 @@ public class ItemService<T extends Item> {
                                 Long baseId, Long countryId, Long spiritId, List<Long> tasteIds) {
         return searchRepository.searchItems(search, categoryId, groupId, subgroupId, baseId, countryId, spiritId, tasteIds)
                 .stream()
-                .map(mapper::map)
+                .map(itemMapper::map)
                 .collect(Collectors.toList());
     }
 
@@ -88,15 +91,22 @@ public class ItemService<T extends Item> {
 
 
     public T add(T item) {
-        return null;
+        item.setId(null);
+        itemMapper.map(item, item);
+        return itemRepository.save(item);
     }
 
     public T update(Long id, T item) {
-        return null;
+        T oldItem = getItem(id);
+        item.setId(id);
+        itemMapper.map(item, oldItem);
+        return itemRepository.save(oldItem);
     }
 
     public void delete(Long id) {
-        itemRepository.deleteById(id);
+        if (itemRepository.existsById(id)) {
+            itemRepository.deleteById(id);
+        } else throw new ItemNotFoundException(id);
     }
 
 }

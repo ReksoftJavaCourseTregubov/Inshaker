@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.controllers.user_functions;
+package ru.vsu.amm.inshaker.controllers.userfunctions;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -6,7 +6,7 @@ import ru.vsu.amm.inshaker.dto.entire.PartyDTO;
 import ru.vsu.amm.inshaker.dto.simple.UserSimpleDTO;
 import ru.vsu.amm.inshaker.dto.simple.PartySimpleDTO;
 import ru.vsu.amm.inshaker.services.user.UserService;
-import ru.vsu.amm.inshaker.services.user_functions.PartyService;
+import ru.vsu.amm.inshaker.services.userfunctions.PartyService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;

@@ -1,11 +1,11 @@
-package ru.vsu.amm.inshaker.controllers.user_functions;
+package ru.vsu.amm.inshaker.controllers.userfunctions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.services.user_functions.CustomCocktailService;
+import ru.vsu.amm.inshaker.services.userfunctions.CustomCocktailService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;

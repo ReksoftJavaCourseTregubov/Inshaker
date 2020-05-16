@@ -13,7 +13,7 @@ import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 import java.util.Arrays;
 
 @Service
-class PropertiesService {
+public class PropertiesService {
 
     private final PropertiesRepository repository;
 
