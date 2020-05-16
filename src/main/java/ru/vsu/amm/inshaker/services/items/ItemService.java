@@ -10,6 +10,7 @@ import ru.vsu.amm.inshaker.exceptions.notfound.ItemNotFoundException;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.repositories.ItemRepository;
+import ru.vsu.amm.inshaker.repositories.ItemSubgroupRepository;
 import ru.vsu.amm.inshaker.repositories.SearchRepository;
 import ru.vsu.amm.inshaker.services.PropertiesService;
 import ru.vsu.amm.inshaker.services.user.UserService;
@@ -24,6 +25,7 @@ public class ItemService<T extends Item> {
     private final UserService userService;
     private final PropertiesService propertiesService;
     private final SearchRepository searchRepository;
+    private final ItemSubgroupRepository itemSubgroupRepository;
     private final ItemRepository<T> itemRepository;
     private final ItemMapper<T> itemMapper;
 
@@ -31,11 +33,12 @@ public class ItemService<T extends Item> {
     public ItemService(UserService userService,
                        PropertiesService propertiesService,
                        SearchRepository searchRepository,
-                       ItemRepository<T> itemRepository,
+                       ItemSubgroupRepository itemSubgroupRepository, ItemRepository<T> itemRepository,
                        ItemMapper<T> itemMapper) {
         this.userService = userService;
         this.propertiesService = propertiesService;
         this.searchRepository = searchRepository;
+        this.itemSubgroupRepository = itemSubgroupRepository;
         this.itemRepository = itemRepository;
         this.itemMapper = itemMapper;
     }
@@ -104,9 +107,11 @@ public class ItemService<T extends Item> {
     }
 
     public void delete(Long id) {
-        if (itemRepository.existsById(id)) {
-            itemRepository.deleteById(id);
-        } else throw new ItemNotFoundException(id);
+        T item = getItem(id);
+        itemRepository.delete(item);
+        if (itemRepository.findAllByItemSubgroup(item.getItemSubgroup()).isEmpty()) {
+            itemSubgroupRepository.delete(item.getItemSubgroup());
+        }
     }
 
 }

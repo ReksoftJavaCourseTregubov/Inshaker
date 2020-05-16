@@ -9,6 +9,7 @@ import ru.vsu.amm.inshaker.dto.simple.ItemGroupedDTO;
 import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.services.items.ItemService;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -66,6 +67,7 @@ public class ItemController<T extends Item> {
         }
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         itemService.delete(id);

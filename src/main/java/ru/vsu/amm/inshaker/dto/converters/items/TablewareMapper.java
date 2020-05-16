@@ -5,13 +5,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.model.item.Tableware;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
+import ru.vsu.amm.inshaker.repositories.ItemSubgroupRepository;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 
 @Service
 public class TablewareMapper extends ItemMapper<Tableware> {
 
-    public TablewareMapper(PropertiesRepository propertiesRepository, CocktailRepository cocktailRepository, Mapper mapper) {
-        super(propertiesRepository, cocktailRepository, mapper);
+    public TablewareMapper(PropertiesRepository propertiesRepository,
+                           CocktailRepository cocktailRepository,
+                           ItemSubgroupRepository itemSubgroupRepository,
+                           Mapper mapper) {
+        super(propertiesRepository, cocktailRepository, itemSubgroupRepository, mapper);
     }
 
     @Override

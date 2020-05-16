@@ -7,16 +7,17 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.vsu.amm.inshaker.exceptions.NotBlankException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ValidationExceptionsAdvice {
 
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> validationExceptionsHandler(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -25,6 +26,12 @@ public class ValidationExceptionsAdvice {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ResponseBody
+    @ExceptionHandler(NotBlankException.class)
+    public String validationExceptionsHandler(NotBlankException ex) {
+        return ex.getMessage();
     }
 
 }

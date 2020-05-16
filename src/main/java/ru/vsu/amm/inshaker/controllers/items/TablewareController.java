@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.model.item.Tableware;
 import ru.vsu.amm.inshaker.services.items.ItemService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 @RestController
@@ -22,12 +23,14 @@ public class TablewareController extends ItemController<Tableware> {
     }
 
     @Override
+    @RolesAllowed("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<Tableware> add(@RequestBody @Valid Tableware item) {
         return super.add(item);
     }
 
     @Override
+    @RolesAllowed("ROLE_ADMIN")
     @PutMapping("/{id}")
     public ResponseEntity<Tableware> update(@PathVariable Long id, @RequestBody @Valid Tableware item) {
         return super.update(id, item);

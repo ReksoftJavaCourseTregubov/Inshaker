@@ -6,14 +6,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
+import ru.vsu.amm.inshaker.exceptions.NotBlankException;
 import ru.vsu.amm.inshaker.exceptions.notfound.EntityNotFoundException;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.model.item.Tableware;
+import ru.vsu.amm.inshaker.model.item.properties.ItemGroup;
 import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
+import ru.vsu.amm.inshaker.repositories.ItemSubgroupRepository;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 
 import java.util.HashSet;
@@ -29,11 +32,16 @@ public class ItemMapper<T extends Item> {
     @Getter
     private final PropertiesRepository propertiesRepository;
     private final CocktailRepository cocktailRepository;
+    private final ItemSubgroupRepository itemSubgroupRepository;
     private final Mapper mapper;
 
-    public ItemMapper(PropertiesRepository propertiesRepository, CocktailRepository cocktailRepository, Mapper mapper) {
+    public ItemMapper(PropertiesRepository propertiesRepository,
+                      CocktailRepository cocktailRepository,
+                      ItemSubgroupRepository itemSubgroupRepository,
+                      Mapper mapper) {
         this.propertiesRepository = propertiesRepository;
         this.cocktailRepository = cocktailRepository;
+        this.itemSubgroupRepository = itemSubgroupRepository;
         this.mapper = mapper;
     }
 
@@ -71,7 +79,17 @@ public class ItemMapper<T extends Item> {
 
     public void map(T source, T destination) {
         destination.setItemSubgroup(Optional.ofNullable(source.getItemSubgroup())
-                .map(t -> find(ItemSubgroup.class, t.getId()))
+                .map(t -> propertiesRepository.findById(ItemSubgroup.class, t.getId())
+                        .orElseGet(() -> {
+                            ItemSubgroup s = new ItemSubgroup();
+                            s.setId(null);
+                            s.setName(Optional.ofNullable(t.getName())
+                                    .orElseThrow(() -> new NotBlankException("ItemGroup name")));
+                            s.setItemGroup(Optional.ofNullable(t.getItemGroup())
+                                    .map(r -> find(ItemGroup.class, r.getId()))
+                                    .orElseThrow(() -> new EntityNotFoundException(ItemGroup.class, null)));
+                            return itemSubgroupRepository.save(s);
+                        }))
                 .orElse(null));
     }
 

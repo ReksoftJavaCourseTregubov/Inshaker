@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.services.items.ItemService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 @RestController
@@ -22,12 +23,14 @@ public class GarnishController extends ItemController<Garnish> {
     }
 
     @Override
+    @RolesAllowed("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<Garnish> add(@RequestBody @Valid Garnish item) {
         return super.add(item);
     }
 
     @Override
+    @RolesAllowed("ROLE_ADMIN")
     @PutMapping("/{id}")
     public ResponseEntity<Garnish> update(@PathVariable Long id, @RequestBody @Valid Garnish item) {
         return super.update(id, item);

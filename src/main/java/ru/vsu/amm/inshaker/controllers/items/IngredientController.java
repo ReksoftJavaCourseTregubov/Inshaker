@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.services.items.ItemService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 @RestController
@@ -22,12 +23,14 @@ public class IngredientController extends ItemController<Ingredient> {
     }
 
     @Override
+    @RolesAllowed("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<Ingredient> add(@RequestBody @Valid Ingredient item) {
         return super.add(item);
     }
 
     @Override
+    @RolesAllowed("ROLE_ADMIN")
     @PutMapping("/{id}")
     public ResponseEntity<Ingredient> update(@PathVariable Long id, @RequestBody @Valid Ingredient item) {
         return super.update(id, item);
