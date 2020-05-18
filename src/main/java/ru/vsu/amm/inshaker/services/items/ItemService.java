@@ -49,7 +49,7 @@ public class ItemService<T extends Item> {
     }
 
     public T getOne(Long id) {
-        Item item = getItem(id);
+        T item = getItem(id);
 
 
         if (item instanceof Ingredient) {
@@ -61,7 +61,7 @@ public class ItemService<T extends Item> {
             }
         }
 
-        return getItem(id);
+        return item;
     }
 
     public List<ItemGroupedDTO> getAll() {

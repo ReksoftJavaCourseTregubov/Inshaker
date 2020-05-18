@@ -45,7 +45,7 @@ public class PartyController {
 
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/{id}")
-    PartyDTO update(@RequestBody @Valid PartyDTO cocktail, @PathVariable Long id) {
+    public PartyDTO update(@RequestBody @Valid PartyDTO cocktail, @PathVariable Long id) {
         return partyService.update(cocktail, id);
     }
 

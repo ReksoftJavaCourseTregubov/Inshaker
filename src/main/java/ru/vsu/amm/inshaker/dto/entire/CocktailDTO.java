@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
+import ru.vsu.amm.inshaker.dto.simple.TablewareDTO;
 import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
-import ru.vsu.amm.inshaker.dto.simple.TablewareDTO;
-import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
@@ -31,8 +30,7 @@ public class CocktailDTO {
     @PositiveOrZero
     private byte spirit;
 
-    @JsonIgnoreProperties({"tableware", "description"})
-    private MixingMethod mixingMethod;
+    private MixingMethodDTO mixingMethod;
 
     @JsonIgnoreProperties("recipe")
     private TablewareDTO glass;

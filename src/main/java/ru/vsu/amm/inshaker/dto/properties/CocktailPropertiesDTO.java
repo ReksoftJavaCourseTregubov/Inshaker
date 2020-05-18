@@ -2,10 +2,10 @@ package ru.vsu.amm.inshaker.dto.properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import ru.vsu.amm.inshaker.dto.entire.MixingMethodDTO;
 import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
-import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 
@@ -25,7 +25,6 @@ public class CocktailPropertiesDTO {
 
     private List<Spirit> spirits;
 
-    @JsonIgnoreProperties({"tableware", "description"})
-    private List<MixingMethod> mixingMethods;
+    private List<MixingMethodDTO> mixingMethods;
 
 }

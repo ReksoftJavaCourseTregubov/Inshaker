@@ -5,11 +5,9 @@ import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 import ru.vsu.amm.inshaker.model.item.Tableware;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -28,6 +26,9 @@ public class MixingMethod {
     private Set<Tableware> tableware;
 
     private String description;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<MixingMethodStep> mixingMethodStep;
 
     @URL
     private String iconImageRef;
