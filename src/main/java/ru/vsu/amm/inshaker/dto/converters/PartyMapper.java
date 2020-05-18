@@ -1,6 +1,7 @@
 package ru.vsu.amm.inshaker.dto.converters;
 
 import org.dozer.Mapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.PartyDTO;
@@ -68,15 +69,16 @@ public class PartyMapper {
         return result;
     }
 
-    public Party map(PartyDTO party) {
-        Party result = mapper.map(party, Party.class);
-        result.setCocktailAmount(party.getCocktailAmount()
-                .stream()
-                .collect(Collectors.toMap(
-                        x -> service.getCocktail(x.getCocktail().getId()),
-                        CocktailAmountDTO::getAmount
-                )));
-        return result;
+    public Party map(PartyDTO source, Party destination) {
+        BeanUtils.copyProperties(source, destination, "cocktailAmount", "members");
+        destination.setCocktailAmount(Optional.ofNullable(source.getCocktailAmount())
+                .map(t -> t.stream()
+                        .collect(Collectors.toMap(
+                                x -> service.getCocktail(x.getCocktail().getId()),
+                                CocktailAmountDTO::getAmount
+                        )))
+                .orElse(Collections.emptyMap()));
+        return destination;
     }
 
     public PartySimpleDTO mapSimple(Party party) {

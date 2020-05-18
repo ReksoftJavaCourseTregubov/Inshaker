@@ -9,6 +9,7 @@ import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.exceptions.notfound.CocktailNotFoundException;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
+import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
 import ru.vsu.amm.inshaker.model.user.User;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
 import ru.vsu.amm.inshaker.repositories.SearchRepository;
@@ -84,6 +85,10 @@ public class CocktailService {
 
     public CocktailPropertiesDTO getProperties() {
         return propertiesService.getCocktailProperties();
+    }
+
+    public MixingMethod getMixingMethod(Long id) {
+        return propertiesService.getMixingMethod(id);
     }
 
 

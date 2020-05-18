@@ -1,5 +1,6 @@
 package ru.vsu.amm.inshaker.model.cocktail;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 import ru.vsu.amm.inshaker.model.item.Tableware;
@@ -22,6 +23,7 @@ public class MixingMethod {
     @NotBlank
     private String name;
 
+    @JsonIgnore
     @ManyToMany
     private Set<Tableware> tableware;
 

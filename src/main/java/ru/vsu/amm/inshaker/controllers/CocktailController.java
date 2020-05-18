@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
 import ru.vsu.amm.inshaker.dto.properties.CocktailPropertiesDTO;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
+import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
 import ru.vsu.amm.inshaker.services.CocktailService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
@@ -55,7 +57,12 @@ public class CocktailController {
         return ResponseEntity.ok(service.getProperties());
     }
 
-//    @RolesAllowed("ROLE_ADMIN")
+    @GetMapping("/properties/mixing-method/{id}")
+    public ResponseEntity<MixingMethod> mixingMethod(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getMixingMethod(id));
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<CocktailDTO> add(@RequestBody @Valid CocktailDTO cocktail) {
         CocktailDTO newCocktail = service.add(cocktail);
@@ -66,7 +73,7 @@ public class CocktailController {
         }
     }
 
-//    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     @PutMapping("/{id}")
     public ResponseEntity<CocktailDTO> update(@PathVariable Long id, @RequestBody @Valid CocktailDTO cocktail) {
         CocktailDTO newCocktail = service.update(cocktail, id);
@@ -77,7 +84,7 @@ public class CocktailController {
         }
     }
 
-//    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);

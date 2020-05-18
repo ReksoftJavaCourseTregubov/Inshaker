@@ -1,6 +1,5 @@
 package ru.vsu.amm.inshaker.services.userfunctions;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.PartyMapper;
 import ru.vsu.amm.inshaker.dto.entire.PartyDTO;
@@ -15,6 +14,7 @@ import ru.vsu.amm.inshaker.repositories.user.UserRepository;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,26 +87,28 @@ public class PartyService {
 
 
     public PartyDTO addParty(PartyDTO party, User author) {
-        Party newParty = mapper.map(party);
-        newParty.setId(null);
+        party.setId(null);
+        Party newParty = new Party();
+        mapper.map(party, newParty);
         newParty.setAuthor(author);
         return mapper.map(partyRepository.save(newParty));
     }
 
     public PartyDTO updateParty(PartyDTO newParty, Long id, User author) {
-        return partyRepository.findByIdAndAuthor(id, author)
-                .map(oldParty -> {
-                    BeanUtils.copyProperties(mapper.map(newParty), oldParty);
-                    oldParty.setId(id);
-                    oldParty.setAuthor(author);
-                    return mapper.map(partyRepository.save(oldParty));
-                }).orElseThrow(() -> new PartyNotFoundException(id));
+        Party oldParty = getParty(id);
+        if (Optional.ofNullable(oldParty).map(Party::getAuthor).orElse(null) == author) {
+            newParty.setId(id);
+            mapper.map(newParty, oldParty);
+            oldParty.setAuthor(author);
+            return mapper.map(partyRepository.save(oldParty));
+        } else throw new PartyAccessDeniedException("User does not have permission to update basic party");
     }
 
     public void deleteParty(Long id, User author) {
-        if (partyRepository.existsByIdAndAuthor(id, author)) {
-            partyRepository.deleteById(id);
-        } else throw new PartyNotFoundException(id);
+        Party party = getParty(id);
+        if (Optional.ofNullable(party).map(Party::getAuthor).orElse(null) == author) {
+            partyRepository.delete(party);
+        } else throw new PartyAccessDeniedException("User does not have permission to delete party" + id);
     }
 
 

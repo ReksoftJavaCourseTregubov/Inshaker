@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.services;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.properties.CocktailPropertiesDTO;
 import ru.vsu.amm.inshaker.dto.properties.IngredientPropertiesDTO;
+import ru.vsu.amm.inshaker.exceptions.notfound.EntityNotFoundException;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
 import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
@@ -42,6 +43,11 @@ public class PropertiesService {
         properties.setSpirits(Arrays.asList(Spirit.values()));
 
         return properties;
+    }
+
+    public MixingMethod getMixingMethod(Long id) {
+        return repository.findById(MixingMethod.class, id)
+                .orElseThrow(() -> new EntityNotFoundException(MixingMethod.class, id));
     }
 
 }
