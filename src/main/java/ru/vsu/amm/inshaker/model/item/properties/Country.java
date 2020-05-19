@@ -20,6 +20,6 @@ public class Country {
     private String name;
 
     @URL
-    private String FlagImageRef;
+    private String flagImageRef;
 
 }

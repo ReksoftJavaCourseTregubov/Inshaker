@@ -10,7 +10,7 @@ import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
 import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
-import ru.vsu.amm.inshaker.model.item.properties.ItemGroup;
+import ru.vsu.amm.inshaker.model.item.properties.*;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 
 import java.util.Arrays;
@@ -33,6 +33,7 @@ public class PropertiesService {
         properties.setBases(repository.findDistinctCocktailBases());
         properties.setGroups(repository.findAllDistinct(CocktailGroup.class));
         properties.setSubgroups(repository.findAllDistinct(CocktailSubgroup.class));
+
         properties.setTastes(repository.findDistinctCocktailTastes());
         properties.setMixingMethods(repository.findAllDistinct(MixingMethod.class)
                 .stream()
@@ -46,9 +47,14 @@ public class PropertiesService {
     public IngredientPropertiesDTO getIngredientProperties() {
         IngredientPropertiesDTO properties = new IngredientPropertiesDTO();
 
+        properties.setSubGroups(repository.findAllDistinct(ItemSubgroup.class));
         properties.setGroups(repository.findAllDistinct(ItemGroup.class));
+        properties.setCategories(repository.findAllDistinct(ItemCategory.class));
+
         properties.setTastes(repository.findDistinctIngredientTastes());
         properties.setSpirits(Arrays.asList(Spirit.values()));
+        properties.setCountries(repository.findAllDistinct(Country.class));
+        properties.setBases(repository.findAllDistinct(IngredientBase.class));
 
         return properties;
     }
