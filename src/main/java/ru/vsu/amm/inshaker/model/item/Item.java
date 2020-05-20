@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.URL;
 import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity
@@ -27,7 +26,6 @@ public class Item {
     @URL
     private String imageRef;
 
-    @NotBlank
     @Column(name = "DTYPE", insertable = false, updatable = false)
     private String dType;
 
