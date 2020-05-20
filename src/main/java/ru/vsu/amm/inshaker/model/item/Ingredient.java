@@ -36,10 +36,4 @@ public class Ingredient extends Item {
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RecipePart> recipePart;
 
-    @Transient
-    private boolean inBar;
-
-    @Transient
-    private final boolean availableForBar = true;
-
 }

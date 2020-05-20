@@ -2,7 +2,7 @@ package ru.vsu.amm.inshaker.dto.properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import ru.vsu.amm.inshaker.dto.entire.MixingMethodDTO;
+import ru.vsu.amm.inshaker.dto.simple.MixingMethodDTO;
 import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;

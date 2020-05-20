@@ -3,7 +3,7 @@ package ru.vsu.amm.inshaker.controllers.userfunctions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
+import ru.vsu.amm.inshaker.dto.entire.items.ItemDTO;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.services.userfunctions.BarService;
 

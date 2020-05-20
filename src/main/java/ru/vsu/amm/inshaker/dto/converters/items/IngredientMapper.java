@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.dto.converters.items;
 import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import ru.vsu.amm.inshaker.dto.entire.items.IngredientDTO;
 import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.properties.Country;
@@ -10,6 +11,7 @@ import ru.vsu.amm.inshaker.model.item.properties.IngredientBase;
 import ru.vsu.amm.inshaker.repositories.CocktailRepository;
 import ru.vsu.amm.inshaker.repositories.ItemSubgroupRepository;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
+import ru.vsu.amm.inshaker.services.factory.ItemFactory;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,18 +20,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class IngredientMapper<T extends Ingredient> extends ItemMapper<T> {
-
+public class IngredientMapper<T extends Ingredient, S extends IngredientDTO> extends ItemMapper<T, S> {
 
     public IngredientMapper(PropertiesRepository propertiesRepository,
                             CocktailRepository cocktailRepository,
                             ItemSubgroupRepository itemSubgroupRepository,
-                            Mapper mapper) {
-        super(propertiesRepository, cocktailRepository, itemSubgroupRepository, mapper);
+                            Mapper mapper,
+                            ItemFactory<T, S> ingredientFactory) {
+        super(propertiesRepository, cocktailRepository, itemSubgroupRepository, mapper, ingredientFactory);
     }
 
     @Override
-    public void map(T source, T destination) {
+    public void map(S source, T destination) {
         super.map(source, destination);
         BeanUtils.copyProperties(source, destination,
                 "itemSubgroup", "ingredientBase", "country", "taste", "recipePart");
@@ -50,7 +52,7 @@ public class IngredientMapper<T extends Ingredient> extends ItemMapper<T> {
         destination.getTaste().addAll(tastes);
     }
 
-    private Set<Taste> tastes(Ingredient source) {
+    private Set<Taste> tastes(IngredientDTO source) {
         return Optional.ofNullable(source.getTaste())
                 .map(s -> s.stream()
                         .map(t -> find(Taste.class, t.getId()))

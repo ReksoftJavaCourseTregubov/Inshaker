@@ -1,4 +1,4 @@
-package ru.vsu.amm.inshaker.dto.entire;
+package ru.vsu.amm.inshaker.dto.simple;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;

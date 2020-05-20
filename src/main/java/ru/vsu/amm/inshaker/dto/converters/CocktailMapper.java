@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
-import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
+import ru.vsu.amm.inshaker.dto.entire.items.ItemDTO;
+import ru.vsu.amm.inshaker.dto.simple.ItemSimpleDTO;
 import ru.vsu.amm.inshaker.exceptions.notfound.EntityNotFoundException;
 import ru.vsu.amm.inshaker.model.RecipePart;
 import ru.vsu.amm.inshaker.model.Taste;
@@ -27,11 +28,11 @@ import java.util.stream.Collectors;
 public class CocktailMapper {
 
     private final PropertiesRepository propertiesRepository;
-    private final ItemMapper<Item> itemMapper;
+    private final ItemMapper<Item, ItemDTO> itemMapper;
     private final Mapper mapper;
 
     public CocktailMapper(PropertiesRepository propertiesRepository,
-                          ItemMapper<Item> itemMapper,
+                          ItemMapper<Item, ItemDTO> itemMapper,
                           Mapper mapper) {
         this.propertiesRepository = propertiesRepository;
         this.itemMapper = itemMapper;
@@ -44,7 +45,7 @@ public class CocktailMapper {
                 .stream()
                 .filter(RecipePart::getIsBase)
                 .findFirst()
-                .map(i -> itemMapper.map(i.getIngredient()))
+                .map(i -> mapper.map(i.getIngredient(), ItemSimpleDTO.class))
                 .orElse(null));
         return result;
     }
@@ -53,7 +54,7 @@ public class CocktailMapper {
         CocktailSimpleDTO result = mapper.map(source, CocktailSimpleDTO.class);
         result.setIngredients(source.getRecipePart()
                 .stream()
-                .map(i -> itemMapper.map(i.getIngredient()))
+                .map(i -> itemMapper.mapSimple(i.getIngredient()))
                 .sorted(Comparator.comparing(ItemDTO::getId))
                 .collect(Collectors.toList()));
         return result;
@@ -109,7 +110,7 @@ public class CocktailMapper {
                                     });
                             r.setAmount(dto.getAmount());
                             r.setIsBase(r.getIngredient().getId().equals(Optional.ofNullable(source.getBase())
-                                    .map(ItemDTO::getId)
+                                    .map(ItemSimpleDTO::getId)
                                     .orElse(null)));
                             return r;
                         }).collect(Collectors.toSet()))

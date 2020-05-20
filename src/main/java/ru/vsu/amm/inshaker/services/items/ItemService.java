@@ -2,9 +2,10 @@ package ru.vsu.amm.inshaker.services.items;
 
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
+import ru.vsu.amm.inshaker.dto.entire.ItemGroupedDTO;
+import ru.vsu.amm.inshaker.dto.entire.items.IngredientDTO;
+import ru.vsu.amm.inshaker.dto.entire.items.ItemDTO;
 import ru.vsu.amm.inshaker.dto.properties.IngredientPropertiesDTO;
-import ru.vsu.amm.inshaker.dto.simple.ItemDTO;
-import ru.vsu.amm.inshaker.dto.simple.ItemGroupedDTO;
 import ru.vsu.amm.inshaker.exceptions.AnonymousAuthenticationException;
 import ru.vsu.amm.inshaker.exceptions.notfound.ItemNotFoundException;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
@@ -13,6 +14,7 @@ import ru.vsu.amm.inshaker.repositories.ItemRepository;
 import ru.vsu.amm.inshaker.repositories.ItemSubgroupRepository;
 import ru.vsu.amm.inshaker.repositories.SearchRepository;
 import ru.vsu.amm.inshaker.services.PropertiesService;
+import ru.vsu.amm.inshaker.services.factory.ItemFactory;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
 import java.util.Comparator;
@@ -20,27 +22,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ItemService<T extends Item> {
+public class ItemService<T extends Item, S extends ItemDTO> {
 
     private final UserService userService;
     private final PropertiesService propertiesService;
     private final SearchRepository searchRepository;
     private final ItemSubgroupRepository itemSubgroupRepository;
     private final ItemRepository<T> itemRepository;
-    private final ItemMapper<T> itemMapper;
-
+    private final ItemMapper<T, S> itemMapper;
+    private final ItemFactory<T, S> itemFactory;
 
     public ItemService(UserService userService,
                        PropertiesService propertiesService,
                        SearchRepository searchRepository,
-                       ItemSubgroupRepository itemSubgroupRepository, ItemRepository<T> itemRepository,
-                       ItemMapper<T> itemMapper) {
+                       ItemSubgroupRepository itemSubgroupRepository,
+                       ItemRepository<T> itemRepository,
+                       ItemMapper<T, S> itemMapper,
+                       ItemFactory<T, S> itemFactory) {
         this.userService = userService;
         this.propertiesService = propertiesService;
         this.searchRepository = searchRepository;
         this.itemSubgroupRepository = itemSubgroupRepository;
         this.itemRepository = itemRepository;
         this.itemMapper = itemMapper;
+        this.itemFactory = itemFactory;
     }
 
     public T getItem(Long id) {
@@ -48,20 +53,20 @@ public class ItemService<T extends Item> {
                 .orElseThrow(() -> new ItemNotFoundException(id));
     }
 
-    public T getOne(Long id) {
+    public S getOne(Long id) {
         T item = getItem(id);
-
+        S itemDTO = itemMapper.map(item);
 
         if (item instanceof Ingredient) {
             try {
                 if (userService.getCurrentUser().getBar().contains(item)) {
-                    ((Ingredient) item).setInBar(true);
+                    ((IngredientDTO) itemDTO).setInBar(true);
                 }
             } catch (AnonymousAuthenticationException ignored) {
             }
         }
 
-        return item;
+        return itemDTO;
     }
 
     public List<ItemGroupedDTO> getAll() {
@@ -73,7 +78,7 @@ public class ItemService<T extends Item> {
                 .map(m -> new ItemGroupedDTO(m.getKey().getId(), m.getKey().getName(),
                         m.getValue()
                                 .stream()
-                                .map(itemMapper::map)
+                                .map(itemMapper::mapSimple)
                                 .sorted(Comparator.comparing(ItemDTO::getId))
                                 .collect(Collectors.toList())))
                 .sorted(Comparator.comparing(ItemGroupedDTO::getGroupId))
@@ -84,7 +89,7 @@ public class ItemService<T extends Item> {
                                 Long baseId, Long countryId, Long spiritId, List<Long> tasteIds) {
         return searchRepository.searchItems(search, categoryId, groupId, subgroupId, baseId, countryId, spiritId, tasteIds)
                 .stream()
-                .map(itemMapper::map)
+                .map(itemMapper::mapSimple)
                 .collect(Collectors.toList());
     }
 
@@ -93,17 +98,18 @@ public class ItemService<T extends Item> {
     }
 
 
-    public T add(T item) {
+    public S add(S item) {
         item.setId(null);
-        itemMapper.map(item, item);
-        return itemRepository.save(item);
+        T newItem = itemFactory.createItem();
+        itemMapper.map(item, newItem);
+        return itemMapper.map(itemRepository.save(newItem));
     }
 
-    public T update(Long id, T item) {
+    public S update(Long id, S item) {
         T oldItem = getItem(id);
         item.setId(id);
         itemMapper.map(item, oldItem);
-        return itemRepository.save(oldItem);
+        return itemMapper.map(itemRepository.save(oldItem));
     }
 
     public void delete(Long id) {

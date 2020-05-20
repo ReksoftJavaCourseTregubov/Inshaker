@@ -30,9 +30,6 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
 
     List<Cocktail> findAllByGarnish(Garnish garnish, Pageable pageable);
 
-    @Query("select c from Cocktail c join c.recipePart r where r.ingredient = :ingredient")
-    List<Cocktail> findAllByIngredient(@Param("ingredient") Ingredient ingredient, Pageable pageable);
-
     @Query("select distinct c from Cocktail c join c.mixingMethod m join m.tableware t where t = :tool")
     List<Cocktail> findAllByTool(@Param("tool") Tableware tool, Pageable pageable);
 

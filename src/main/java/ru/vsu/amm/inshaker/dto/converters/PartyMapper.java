@@ -3,17 +3,16 @@ package ru.vsu.amm.inshaker.dto.converters;
 import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.PartyDTO;
 import ru.vsu.amm.inshaker.dto.maps.CocktailAmountDTO;
 import ru.vsu.amm.inshaker.dto.maps.IngredientAmountDTO;
+import ru.vsu.amm.inshaker.dto.simple.ItemSimpleDTO;
 import ru.vsu.amm.inshaker.dto.simple.PartySimpleDTO;
-import ru.vsu.amm.inshaker.dto.simple.TablewareDTO;
+import ru.vsu.amm.inshaker.dto.simple.TablewareSimpleDTO;
 import ru.vsu.amm.inshaker.model.Party;
 import ru.vsu.amm.inshaker.model.RecipePart;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
-import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.services.CocktailService;
 
 import java.util.*;
@@ -25,13 +24,11 @@ public class PartyMapper {
     private final CocktailService service;
     private final Mapper mapper;
     private final CocktailMapper cocktailMapper;
-    private final ItemMapper<Item> itemMapper;
 
-    public PartyMapper(CocktailService service, Mapper mapper, CocktailMapper cocktailMapper, ItemMapper<Item> itemMapper) {
+    public PartyMapper(CocktailService service, Mapper mapper, CocktailMapper cocktailMapper) {
         this.service = service;
         this.mapper = mapper;
         this.cocktailMapper = cocktailMapper;
-        this.itemMapper = itemMapper;
     }
 
     public PartyDTO map(Party party) {
@@ -53,16 +50,16 @@ public class PartyMapper {
 
             result.getCocktailAmount().add(new CocktailAmountDTO(cocktailMapper.mapSimple(entry.getKey()), entry.getValue()));
 
-            result.getTableware().add(mapper.map(entry.getKey().getGlass(), TablewareDTO.class));
+            result.getTableware().add(mapper.map(entry.getKey().getGlass(), TablewareSimpleDTO.class));
             result.getTableware().addAll(entry.getKey().getMixingMethod().getTableware()
                     .stream()
-                    .map(t -> mapper.map(t, TablewareDTO.class))
+                    .map(t -> mapper.map(t, TablewareSimpleDTO.class))
                     .collect(Collectors.toSet()));
         }
 
         result.setIngredientAmount(ingredientMap.entrySet()
                 .stream()
-                .map(x -> new IngredientAmountDTO(itemMapper.map(x.getKey()), x.getValue()))
+                .map(x -> new IngredientAmountDTO(mapper.map(x.getKey(), ItemSimpleDTO.class), x.getValue()))
                 .sorted(Comparator.comparing(IngredientAmountDTO::getAmount).reversed())
                 .collect(Collectors.toList()));
 

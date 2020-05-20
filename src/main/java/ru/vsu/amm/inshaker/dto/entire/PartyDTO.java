@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ru.vsu.amm.inshaker.dto.maps.CocktailAmountDTO;
 import ru.vsu.amm.inshaker.dto.maps.IngredientAmountDTO;
-import ru.vsu.amm.inshaker.dto.simple.TablewareDTO;
+import ru.vsu.amm.inshaker.dto.simple.TablewareSimpleDTO;
 import ru.vsu.amm.inshaker.dto.simple.UserSimpleDTO;
 
 import javax.validation.constraints.PositiveOrZero;
@@ -26,7 +26,7 @@ public class PartyDTO {
     @JsonProperty("recipePart")
     private List<IngredientAmountDTO> ingredientAmount;
 
-    private Set<TablewareDTO> tableware;
+    private Set<TablewareSimpleDTO> tableware;
 
     private String legend;
 

@@ -2,7 +2,7 @@ package ru.vsu.amm.inshaker.services;
 
 import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
-import ru.vsu.amm.inshaker.dto.entire.MixingMethodDTO;
+import ru.vsu.amm.inshaker.dto.simple.MixingMethodDTO;
 import ru.vsu.amm.inshaker.dto.properties.CocktailPropertiesDTO;
 import ru.vsu.amm.inshaker.dto.properties.IngredientPropertiesDTO;
 import ru.vsu.amm.inshaker.exceptions.notfound.EntityNotFoundException;

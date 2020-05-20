@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.dto.simple;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
+import ru.vsu.amm.inshaker.dto.entire.items.ItemDTO;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,7 +17,7 @@ public class CocktailSimpleDTO {
     private String nameEn;
 
     @Valid
-    @JsonIgnoreProperties({"cocktails"})
+    @JsonIgnoreProperties({"cocktails", "itemSubgroup", "legend"})
     private List<ItemDTO> ingredients;
 
     @URL
