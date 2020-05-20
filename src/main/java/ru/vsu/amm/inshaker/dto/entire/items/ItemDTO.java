@@ -7,6 +7,7 @@ import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
@@ -27,5 +28,8 @@ public class ItemDTO {
 
     @URL
     private String imageRef;
+
+    @NotBlank
+    private String dType;
 
 }

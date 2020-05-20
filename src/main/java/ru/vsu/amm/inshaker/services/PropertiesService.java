@@ -48,9 +48,6 @@ public class PropertiesService {
         IngredientPropertiesDTO properties = new IngredientPropertiesDTO();
 
         properties.setSubGroups(repository.findAllDistinct(ItemSubgroup.class));
-        properties.setGroups(repository.findAllDistinct(ItemGroup.class));
-        properties.setCategories(repository.findAllDistinct(ItemCategory.class));
-
         properties.setTastes(repository.findDistinctIngredientTastes());
         properties.setSpirits(Arrays.asList(Spirit.values()));
         properties.setCountries(repository.findAllDistinct(Country.class));
