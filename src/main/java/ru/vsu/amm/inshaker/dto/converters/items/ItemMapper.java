@@ -74,7 +74,7 @@ public class ItemMapper<T extends Item, S extends ItemDTO> {
                                     .orElseThrow(() -> new EntityNotFoundException(ItemGroup.class, null)));
                             return itemSubgroupRepository.save(s);
                         }))
-                .orElse(null));
+                .orElseThrow(() -> new NotBlankException("ItemSubgroup")));
     }
 
     protected <F> F find(Class<F> cls, Long id) {

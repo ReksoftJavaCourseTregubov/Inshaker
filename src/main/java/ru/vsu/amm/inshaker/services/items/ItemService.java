@@ -72,6 +72,7 @@ public class ItemService<T extends Item, S extends ItemDTO> {
     public List<ItemGroupedDTO> getAll() {
         return itemRepository.findAll()
                 .stream()
+                .filter(i -> i.getItemSubgroup() != null)
                 .collect(Collectors.groupingBy(i -> i.getItemSubgroup().getItemGroup()))
                 .entrySet()
                 .stream()
@@ -115,7 +116,7 @@ public class ItemService<T extends Item, S extends ItemDTO> {
     public void delete(Long id) {
         T item = getItem(id);
         itemRepository.delete(item);
-        if (itemRepository.findAllByItemSubgroup(item.getItemSubgroup()).isEmpty()) {
+        if (item.getItemSubgroup() != null & itemRepository.findAllByItemSubgroup(item.getItemSubgroup()).isEmpty()) {
             itemSubgroupRepository.delete(item.getItemSubgroup());
         }
     }
