@@ -2,8 +2,10 @@ package ru.vsu.amm.inshaker.repositories;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
@@ -38,5 +40,10 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
             "group by c having count(r) + (case when :tolerance is null then 0 else :tolerance end) >= r.size")
     List<Cocktail> canBeMadeFrom(@Param("bar") Set<Ingredient> bar,
                                  @Param("tolerance") Long tolerance);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM PARTY_COCKTAIL_AMOUNT WHERE COCKTAIL_ID = :id", nativeQuery = true)
+    void deletePartyCocktailAmountByCocktailId(@Param("id") Long id);
 
 }

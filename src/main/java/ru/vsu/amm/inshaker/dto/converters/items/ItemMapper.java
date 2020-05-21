@@ -68,7 +68,7 @@ public class ItemMapper<T extends Item, S extends ItemDTO> {
                             ItemSubgroup s = new ItemSubgroup();
                             s.setId(null);
                             s.setName(Optional.ofNullable(t.getName())
-                                    .orElseThrow(() -> new NotBlankException("ItemGroup name")));
+                                    .orElseThrow(() -> new NotBlankException("ItemSubgroup name")));
                             s.setItemGroup(Optional.ofNullable(t.getItemGroup())
                                     .map(r -> find(ItemGroup.class, r.getId()))
                                     .orElseThrow(() -> new EntityNotFoundException(ItemGroup.class, null)));
