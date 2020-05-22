@@ -50,9 +50,13 @@ public class PartyMapper {
 
             result.getCocktailAmount().add(new CocktailAmountDTO(cocktailMapper.mapSimple(entry.getKey()), entry.getValue()));
 
-            result.getTableware().add(mapper.map(entry.getKey().getGlass(), TablewareSimpleDTO.class));
+            if (entry.getKey().getGlass() != null) {
+                result.getTableware().add(mapper.map(entry.getKey().getGlass(), TablewareSimpleDTO.class));
+            }
+
             result.getTableware().addAll(entry.getKey().getMixingMethod().getTableware()
                     .stream()
+                    .filter(Objects::nonNull)
                     .map(t -> mapper.map(t, TablewareSimpleDTO.class))
                     .collect(Collectors.toSet()));
         }
