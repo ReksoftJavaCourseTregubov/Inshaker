@@ -50,7 +50,7 @@ public class SearchRepository {
         }
 
         if (spiritId != null) {
-            predicates.add(spiritPredicate(builder, item, spiritId));
+            predicates.add(spiritPredicate(builder, ingredient, spiritId));
         }
 
         if (tasteIds != null) {
@@ -79,7 +79,7 @@ public class SearchRepository {
         predicates.add(builder.isNull(cocktail.get("author")));
 
         if (baseId != null) {
-            predicates.add(builder.equal(cocktail.join("recipePart").get("ingredient").get("id"), baseId));
+            predicates.add(builder.equal(cocktail.join("recipePart").get("ingredient").get("itemSubgroup").get("id"), baseId));
             predicates.add(builder.equal(cocktail.join("recipePart").get("isBase"), true));
         }
 
