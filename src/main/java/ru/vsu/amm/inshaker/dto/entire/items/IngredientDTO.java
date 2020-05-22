@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.dto.entire.items;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.vsu.amm.inshaker.model.Taste;
+import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.model.item.properties.Country;
 import ru.vsu.amm.inshaker.model.item.properties.IngredientBase;
 
@@ -17,6 +18,8 @@ public class IngredientDTO extends ItemDTO {
 
     @PositiveOrZero
     private Byte spirit;
+
+    private Spirit spiritType;
 
     private Country country;
 

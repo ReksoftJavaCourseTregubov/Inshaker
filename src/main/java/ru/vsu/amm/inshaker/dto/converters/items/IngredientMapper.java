@@ -5,6 +5,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.entire.items.IngredientDTO;
 import ru.vsu.amm.inshaker.model.Taste;
+import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.properties.Country;
 import ru.vsu.amm.inshaker.model.item.properties.IngredientBase;
@@ -50,6 +51,12 @@ public class IngredientMapper<T extends Ingredient, S extends IngredientDTO> ext
             destination.getTaste().clear();
         }
         destination.getTaste().addAll(tastes);
+    }
+
+    @Override
+    public void map(T source, S destination) {
+        destination.setSpiritType(Spirit.findBySpiritValue(source.getSpirit()));
+        super.map(source, destination);
     }
 
     private Set<Taste> tastes(IngredientDTO source) {

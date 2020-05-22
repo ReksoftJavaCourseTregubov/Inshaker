@@ -9,6 +9,7 @@ import ru.vsu.amm.inshaker.dto.simple.TablewareSimpleDTO;
 import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
+import ru.vsu.amm.inshaker.model.enums.Spirit;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
@@ -29,6 +30,8 @@ public class CocktailDTO {
 
     @PositiveOrZero
     private byte spirit;
+
+    private Spirit spiritType;
 
     private MixingMethodDTO mixingMethod;
 

@@ -56,9 +56,18 @@ public class ItemMapper<T extends Item, S extends ItemDTO> {
 
     public S map(T source) {
         S result = itemFactory.createItemDTO();
-        mapper.map(source, result);
-        result.setCocktails(cocktails(source, Integer.MAX_VALUE));
+        try {
+            map(source, result);
+        } catch (ClassCastException ex) {
+            mapper.map(source, result);
+            result.setCocktails(cocktails(source, Integer.MAX_VALUE));
+        }
         return result;
+    }
+
+    public void map(T source, S destination) {
+        mapper.map(source, destination);
+        destination.setCocktails(cocktails(source, Integer.MAX_VALUE));
     }
 
     public void map(S source, T destination) {

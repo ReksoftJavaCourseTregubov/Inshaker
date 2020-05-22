@@ -113,6 +113,7 @@ public class CocktailService {
     public void deleteCocktail(Long id, User author) {
         if (cocktailRepository.existsByIdAndAuthor(id, author)) {
             cocktailRepository.deletePartyCocktailAmountByCocktailId(id);
+            cocktailRepository.deleteUserFavoriteByCocktailId(id);
             cocktailRepository.deleteById(id);
         } else throw new CocktailNotFoundException(id);
     }

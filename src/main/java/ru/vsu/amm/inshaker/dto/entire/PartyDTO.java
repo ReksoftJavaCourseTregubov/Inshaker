@@ -7,6 +7,7 @@ import ru.vsu.amm.inshaker.dto.maps.IngredientAmountDTO;
 import ru.vsu.amm.inshaker.dto.simple.TablewareSimpleDTO;
 import ru.vsu.amm.inshaker.dto.simple.UserSimpleDTO;
 
+import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class PartyDTO {
     @PositiveOrZero
     private Short guestsCount;
 
+    @Valid
     private List<CocktailAmountDTO> cocktailAmount;
 
     @JsonProperty("recipePart")

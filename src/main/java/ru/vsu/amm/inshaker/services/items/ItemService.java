@@ -1,5 +1,6 @@
 package ru.vsu.amm.inshaker.services.items;
 
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.ItemGroupedDTO;
@@ -28,6 +29,7 @@ public class ItemService<T extends Item, S extends ItemDTO> {
     private final PropertiesService propertiesService;
     private final SearchRepository searchRepository;
     private final ItemSubgroupRepository itemSubgroupRepository;
+    @Getter
     private final ItemRepository<T> itemRepository;
     private final ItemMapper<T, S> itemMapper;
     private final ItemFactory<T, S> itemFactory;

@@ -46,4 +46,9 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
     @Query(value = "DELETE FROM PARTY_COCKTAIL_AMOUNT WHERE COCKTAIL_ID = :id", nativeQuery = true)
     void deletePartyCocktailAmountByCocktailId(@Param("id") Long id);
 
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM USER_FAVORITE WHERE FAVORITE_ID = :id", nativeQuery = true)
+    void deleteUserFavoriteByCocktailId(@Param("id") Long id);
+
 }

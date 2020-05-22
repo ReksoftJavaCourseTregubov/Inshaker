@@ -15,6 +15,7 @@ import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
 import ru.vsu.amm.inshaker.model.cocktail.MixingMethod;
+import ru.vsu.amm.inshaker.model.enums.Spirit;
 import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.Item;
@@ -41,6 +42,7 @@ public class CocktailMapper {
 
     public CocktailDTO map(Cocktail source) {
         CocktailDTO result = mapper.map(source, CocktailDTO.class);
+        result.setSpiritType(Spirit.findBySpiritValue(source.getSpirit()));
         result.setBase(source.getRecipePart()
                 .stream()
                 .filter(RecipePart::getIsBase)

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,8 +14,7 @@ public enum Spirit {
     STRONG((long) 1, "Крепкие", (byte) 26, (byte) 100),
     MEDIUM((long) 2, "Средние", (byte) 13, (byte) 25),
     LIGHT((long) 3, "Лёгкие", (byte) 1, (byte) 12),
-    FREE((long) 4, "Безалкогольные", (byte) 0, (byte) 0),
-    ANY((long) 5, "Любые", Byte.MIN_VALUE, Byte.MAX_VALUE);
+    FREE((long) 4, "Безалкогольные", (byte) 0, (byte) 0);
 
     private final Long id;
     private final String name;
@@ -41,7 +41,13 @@ public enum Spirit {
     }
 
     public static Spirit findById(Long s) {
-        return map.getOrDefault(s, Spirit.ANY);
+        return map.getOrDefault(s, Spirit.FREE);
+    }
+
+    public static Spirit findBySpiritValue(Byte spirit) {
+        return Arrays.stream(Spirit.values())
+                .filter(s -> s.getRangeLow() <= spirit && spirit <= s.getRangeHigh())
+                .findFirst().orElse(Spirit.FREE);
     }
 
 }

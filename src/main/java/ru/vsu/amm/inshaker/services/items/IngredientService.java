@@ -1,6 +1,7 @@
 package ru.vsu.amm.inshaker.services.items;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.amm.inshaker.dto.converters.items.IngredientMapper;
 import ru.vsu.amm.inshaker.dto.entire.items.IngredientDTO;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
@@ -30,6 +31,13 @@ public class IngredientService<T extends Ingredient, S extends IngredientDTO> ex
     public S add(S item) {
         item.setCocktails(Collections.emptyList());
         return super.add(item);
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        getItemRepository().deleteUserBarByItemId(id);
+        super.delete(id);
     }
 
 }
