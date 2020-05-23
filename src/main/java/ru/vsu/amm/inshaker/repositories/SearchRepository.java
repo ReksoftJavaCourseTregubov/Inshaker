@@ -3,6 +3,7 @@ package ru.vsu.amm.inshaker.repositories;
 import org.springframework.stereotype.Repository;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
+import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.Item;
 
@@ -30,6 +31,7 @@ public class SearchRepository {
 
         Root<Item> item = query.from(Item.class);
         Root<Ingredient> ingredient = builder.treat(item, Ingredient.class);
+        Root<Garnish> garnish = builder.treat(item, Garnish.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -42,15 +44,17 @@ public class SearchRepository {
         }
 
         if (baseId != null) {
-            predicates.add(builder.equal(ingredient.get("ingredientBase").get("id"), baseId));
+            predicates.add(builder.equal(ingredient.join("ingredientBase").get("id"), baseId));
         }
 
         if (countryId != null) {
-            predicates.add(builder.equal(ingredient.get("country").get("id"), countryId));
+            predicates.add(builder.equal(ingredient.join("country").get("id"), countryId));
         }
 
         if (spiritId != null) {
-            predicates.add(spiritPredicate(builder, ingredient, spiritId));
+            predicates.add(builder.or(
+                    spiritPredicate(builder, ingredient, spiritId),
+                    spiritPredicate(builder, garnish, spiritId)));
         }
 
         if (tasteIds != null) {
