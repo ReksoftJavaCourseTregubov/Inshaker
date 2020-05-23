@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vsu.amm.inshaker.dto.entire.UserDTO;
+import ru.vsu.amm.inshaker.dto.simple.UserSimpleDTO;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -48,6 +51,18 @@ public class UserController {
         Map<String, Boolean> isAuth = new HashMap<>(1);
         isAuth.put("isAuth", request.getUserPrincipal() != null);
         return ResponseEntity.ok(isAuth);
+    }
+
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/user")
+    public ResponseEntity<UserSimpleDTO> currentUser() {
+        return ResponseEntity.ok(userService.getCurrentUserDTO());
+    }
+
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/users")
+    public ResponseEntity<List<UserSimpleDTO>> allUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
 }

@@ -68,6 +68,10 @@ public class UserService {
         return findByUsername(authentication.getName());
     }
 
+    public UserSimpleDTO getCurrentUserDTO() {
+        return mapper.map(getCurrentUser(), UserSimpleDTO.class);
+    }
+
     public boolean userHasRole(User user, String roleName) {
         return user.getRoles().stream().map(Role::getName).anyMatch(x -> x.equals(roleName));
     }
