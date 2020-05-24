@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.amm.inshaker.dto.entire.PartyDTO;
 import ru.vsu.amm.inshaker.dto.simple.PartySimpleDTO;
+import ru.vsu.amm.inshaker.dto.simple.UserSimpleDTO;
 import ru.vsu.amm.inshaker.services.userfunctions.PartyService;
 
 import javax.annotation.security.RolesAllowed;
@@ -64,15 +65,15 @@ public class PartyController {
     }
 
     @PutMapping("/{id}/invite")
-    public ResponseEntity<String> invite(@PathVariable Long id, @RequestBody Long memberId) {
-        partyService.invite(id, memberId);
-        return ResponseEntity.ok("User " + memberId + " has access to the party " + id);
+    public ResponseEntity<String> invite(@PathVariable Long id, @RequestBody UserSimpleDTO user) {
+        partyService.invite(id, user.getId());
+        return ResponseEntity.ok("User " + user.getId() + " has access to the party " + id);
     }
 
     @PutMapping("/{id}/dismiss")
-    public ResponseEntity<String> dismiss(@PathVariable Long id, @RequestBody Long memberId) {
-        partyService.dismiss(id, memberId);
-        return ResponseEntity.ok("User " + memberId + " has lost access to the party " + id);
+    public ResponseEntity<String> dismiss(@PathVariable Long id, @RequestBody UserSimpleDTO user) {
+        partyService.dismiss(id, user.getId());
+        return ResponseEntity.ok("User " + user.getId() + " has lost access to the party " + id);
     }
 
     @PutMapping("/{id}/leave")
