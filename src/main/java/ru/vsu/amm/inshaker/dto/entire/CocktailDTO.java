@@ -29,7 +29,7 @@ public class CocktailDTO {
     private CocktailSubgroup cocktailSubgroup;
 
     @PositiveOrZero
-    private byte spirit;
+    private Byte spirit;
 
     private Spirit spiritType;
 

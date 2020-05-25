@@ -98,6 +98,7 @@ public class ItemMapper<T extends Item, S extends ItemDTO> {
             cocktails.addAll(Optional.ofNullable(((Ingredient) source).getRecipePart())
                     .map(t -> t.stream()
                             .map(RecipePart::getCocktail)
+                            .filter(c -> c.getAuthor() == null)
                             .limit(limit)
                             .collect(Collectors.toSet()))
                     .orElse(Collections.emptySet()));
@@ -105,14 +106,14 @@ public class ItemMapper<T extends Item, S extends ItemDTO> {
 
         if (source instanceof Tableware) {
             cocktails.addAll(cocktailRepository
-                    .findAllByGlass((Tableware) source, PageRequest.of(0, limit)));
+                    .findAllByGlassAndAuthorIsNull((Tableware) source, PageRequest.of(0, limit)));
             cocktails.addAll(cocktailRepository
-                    .findAllByTool((Tableware) source, PageRequest.of(0, limit)));
+                    .findAllByToolAndAuthorIsNull((Tableware) source, PageRequest.of(0, limit)));
         }
 
         if (source instanceof Garnish) {
             cocktails.addAll(cocktailRepository
-                    .findAllByGarnish((Garnish) source, PageRequest.of(0, limit)));
+                    .findAllByGarnishAndAuthorIsNull((Garnish) source, PageRequest.of(0, limit)));
         }
 
         return cocktails.stream()

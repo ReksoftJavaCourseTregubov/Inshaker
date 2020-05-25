@@ -5,6 +5,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
+import ru.vsu.amm.inshaker.dto.entire.RecipePartDTO;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.dto.entire.items.ItemDTO;
 import ru.vsu.amm.inshaker.dto.simple.ItemSimpleDTO;
@@ -64,7 +65,7 @@ public class CocktailMapper {
 
     public void map(CocktailDTO source, Cocktail destination) {
         BeanUtils.copyProperties(source, destination,
-                "glass", "garnish", "cocktailSubgroup", "setCocktailGroup", "mixingMethod", "taste", "recipePart");
+                "glass", "garnish", "cocktailSubgroup", "setCocktailGroup", "mixingMethod", "taste", "recipePart", "spirit");
 
         destination.setGlass(Optional.ofNullable(source.getGlass())
                 .map(t -> find(Tableware.class, t.getId()))
@@ -96,6 +97,8 @@ public class CocktailMapper {
             destination.getRecipePart().clear();
         }
         destination.getRecipePart().addAll((recipePart(source, destination)));
+
+        destination.setSpirit(Optional.ofNullable(source.getSpirit()).orElse(calcSpirit(source)));
     }
 
     private Set<RecipePart> recipePart(CocktailDTO source, Cocktail destination) {
@@ -130,6 +133,16 @@ public class CocktailMapper {
     private <T> T find(Class<T> cls, Long id) {
         return propertiesRepository.findById(cls, id)
                 .orElseThrow(() -> new EntityNotFoundException(cls, id));
+    }
+
+    private byte calcSpirit(CocktailDTO source) {
+        float pureSpirit = 0;
+        short totalAmount = 0;
+        for (RecipePartDTO rp : source.getRecipePart()) {
+            pureSpirit += find(Ingredient.class, rp.getIngredient().getId()).getSpirit() * rp.getAmount() / 100.;
+            totalAmount += rp.getAmount();
+        }
+        return (byte) (100 * pureSpirit / totalAmount);
     }
 
 }

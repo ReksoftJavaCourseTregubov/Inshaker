@@ -28,12 +28,12 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
 
     List<Cocktail> findAllByAuthor(User author);
 
-    List<Cocktail> findAllByGlass(Tableware glass, Pageable pageable);
+    List<Cocktail> findAllByGlassAndAuthorIsNull(Tableware glass, Pageable pageable);
 
-    List<Cocktail> findAllByGarnish(Garnish garnish, Pageable pageable);
+    List<Cocktail> findAllByGarnishAndAuthorIsNull(Garnish garnish, Pageable pageable);
 
-    @Query("select distinct c from Cocktail c join c.mixingMethod m join m.tableware t where t = :tool")
-    List<Cocktail> findAllByTool(@Param("tool") Tableware tool, Pageable pageable);
+    @Query("select distinct c from Cocktail c join c.mixingMethod m join m.tableware t where c.author is null and t = :tool")
+    List<Cocktail> findAllByToolAndAuthorIsNull(@Param("tool") Tableware tool, Pageable pageable);
 
     @Query("select c from Cocktail c join c.recipePart r " +
             "where (c.author is null) and r.ingredient in (:bar) " +

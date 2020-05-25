@@ -32,7 +32,7 @@ public class Party {
     @ManyToOne
     private User author;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<User> members;
 
 }
