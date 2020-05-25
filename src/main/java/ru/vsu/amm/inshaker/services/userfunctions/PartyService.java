@@ -14,7 +14,6 @@ import ru.vsu.amm.inshaker.repositories.user.UserRepository;
 import ru.vsu.amm.inshaker.services.user.UserService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,7 +95,7 @@ public class PartyService {
 
     public PartyDTO updateParty(PartyDTO newParty, Long id, User author) {
         Party oldParty = getParty(id);
-        if (Optional.ofNullable(oldParty).map(Party::getAuthor).orElse(null) == author) {
+        if (oldParty.getAuthor() == author) {
             newParty.setId(id);
             mapper.map(newParty, oldParty);
             oldParty.setAuthor(author);
@@ -106,7 +105,7 @@ public class PartyService {
 
     public void deleteParty(Long id, User author) {
         Party party = getParty(id);
-        if (Optional.ofNullable(party).map(Party::getAuthor).orElse(null) == author) {
+        if (party.getAuthor() == author) {
             partyRepository.delete(party);
         } else throw new PartyAccessDeniedException("User does not have permission to delete party" + id);
     }
