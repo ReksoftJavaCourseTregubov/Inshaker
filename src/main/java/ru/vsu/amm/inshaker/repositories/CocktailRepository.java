@@ -28,6 +28,9 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
 
     List<Cocktail> findAllByAuthor(User author);
 
+    @Query("select distinct c from Cocktail c join c.recipePart r where c.author is null and r.ingredient = :ingredient")
+    List<Cocktail> findAllByIngredientAndAuthorIsNull(@Param("ingredient") Ingredient ingredient, Pageable pageable);
+
     List<Cocktail> findAllByGlassAndAuthorIsNull(Tableware glass, Pageable pageable);
 
     List<Cocktail> findAllByGarnishAndAuthorIsNull(Garnish garnish, Pageable pageable);

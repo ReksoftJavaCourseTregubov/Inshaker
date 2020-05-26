@@ -8,7 +8,6 @@ import ru.vsu.amm.inshaker.dto.entire.items.ItemDTO;
 import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.exceptions.NotBlankException;
 import ru.vsu.amm.inshaker.exceptions.notfound.EntityNotFoundException;
-import ru.vsu.amm.inshaker.model.RecipePart;
 import ru.vsu.amm.inshaker.model.cocktail.Cocktail;
 import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
@@ -21,7 +20,10 @@ import ru.vsu.amm.inshaker.repositories.ItemSubgroupRepository;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 import ru.vsu.amm.inshaker.services.factory.ItemFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,13 +97,8 @@ public class ItemMapper<T extends Item, S extends ItemDTO> {
         Set<Cocktail> cocktails = new HashSet<>();
 
         if (source instanceof Ingredient) {
-            cocktails.addAll(Optional.ofNullable(((Ingredient) source).getRecipePart())
-                    .map(t -> t.stream()
-                            .map(RecipePart::getCocktail)
-                            .filter(c -> c.getAuthor() == null)
-                            .limit(limit)
-                            .collect(Collectors.toSet()))
-                    .orElse(Collections.emptySet()));
+            cocktails.addAll(cocktailRepository.
+                    findAllByIngredientAndAuthorIsNull((Ingredient) source, PageRequest.of(0, limit)));
         }
 
         if (source instanceof Tableware) {
