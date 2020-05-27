@@ -15,4 +15,7 @@ public class RecipePartDTO {
     @EqualsAndHashCode.Exclude
     private Short amount;
 
+    @EqualsAndHashCode.Exclude
+    private boolean isBase;
+
 }

@@ -10,6 +10,7 @@ import ru.vsu.amm.inshaker.model.Taste;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailGroup;
 import ru.vsu.amm.inshaker.model.cocktail.CocktailSubgroup;
 import ru.vsu.amm.inshaker.model.enums.Spirit;
+import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
@@ -23,7 +24,8 @@ public class CocktailDTO {
     private String nameRu;
     private String nameEn;
 
-    private ItemSimpleDTO base;
+    @JsonIgnoreProperties("itemGroup")
+    private ItemSubgroup base;
 
     private CocktailGroup cocktailGroup;
     private CocktailSubgroup cocktailSubgroup;

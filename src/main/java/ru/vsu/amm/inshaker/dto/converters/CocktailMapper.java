@@ -6,9 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.vsu.amm.inshaker.dto.converters.items.ItemMapper;
 import ru.vsu.amm.inshaker.dto.entire.CocktailDTO;
 import ru.vsu.amm.inshaker.dto.entire.RecipePartDTO;
-import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.dto.entire.items.ItemDTO;
-import ru.vsu.amm.inshaker.dto.simple.ItemSimpleDTO;
+import ru.vsu.amm.inshaker.dto.simple.CocktailSimpleDTO;
 import ru.vsu.amm.inshaker.exceptions.notfound.EntityNotFoundException;
 import ru.vsu.amm.inshaker.model.RecipePart;
 import ru.vsu.amm.inshaker.model.Taste;
@@ -21,6 +20,7 @@ import ru.vsu.amm.inshaker.model.item.Garnish;
 import ru.vsu.amm.inshaker.model.item.Ingredient;
 import ru.vsu.amm.inshaker.model.item.Item;
 import ru.vsu.amm.inshaker.model.item.Tableware;
+import ru.vsu.amm.inshaker.model.item.properties.ItemSubgroup;
 import ru.vsu.amm.inshaker.repositories.PropertiesRepository;
 
 import java.util.*;
@@ -48,7 +48,7 @@ public class CocktailMapper {
                 .stream()
                 .filter(RecipePart::getIsBase)
                 .findFirst()
-                .map(i -> mapper.map(i.getIngredient(), ItemSimpleDTO.class))
+                .map(i -> mapper.map(i.getIngredient().getItemSubgroup(), ItemSubgroup.class))
                 .orElse(null));
         return result;
     }
@@ -65,7 +65,7 @@ public class CocktailMapper {
 
     public void map(CocktailDTO source, Cocktail destination) {
         BeanUtils.copyProperties(source, destination,
-                "glass", "garnish", "cocktailSubgroup", "setCocktailGroup", "mixingMethod", "taste", "recipePart", "spirit");
+                "glass", "garnish", "cocktailSubgroup", "setCocktailGroup", "mixingMethod", "taste", "recipePart", "spirit", "base");
 
         destination.setGlass(Optional.ofNullable(source.getGlass())
                 .map(t -> find(Tableware.class, t.getId()))
@@ -114,9 +114,7 @@ public class CocktailMapper {
                                         return s;
                                     });
                             r.setAmount(dto.getAmount());
-                            r.setIsBase(r.getIngredient().getId().equals(Optional.ofNullable(source.getBase())
-                                    .map(ItemSimpleDTO::getId)
-                                    .orElse(null)));
+                            r.setIsBase(dto.isBase());
                             return r;
                         }).collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
