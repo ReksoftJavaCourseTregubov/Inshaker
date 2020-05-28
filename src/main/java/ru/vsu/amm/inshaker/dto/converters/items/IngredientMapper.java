@@ -55,7 +55,9 @@ public class IngredientMapper<T extends Ingredient, S extends IngredientDTO> ext
 
     @Override
     public void map(T source, S destination) {
-        destination.setSpiritType(Spirit.findBySpiritValue(source.getSpirit()));
+        destination.setSpiritType(Spirit.findBySpiritValue(Optional
+                .ofNullable(source.getSpirit())
+                .orElse((byte) 0)));
         super.map(source, destination);
     }
 

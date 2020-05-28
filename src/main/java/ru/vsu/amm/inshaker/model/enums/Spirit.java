@@ -44,7 +44,7 @@ public enum Spirit {
         return map.getOrDefault(s, Spirit.FREE);
     }
 
-    public static Spirit findBySpiritValue(Byte spirit) {
+    public static Spirit findBySpiritValue(byte spirit) {
         return Arrays.stream(Spirit.values())
                 .filter(s -> s.getRangeLow() <= spirit && spirit <= s.getRangeHigh())
                 .findFirst().orElse(Spirit.FREE);
